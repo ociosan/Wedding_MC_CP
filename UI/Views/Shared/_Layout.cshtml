@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <link rel="icon" href="~/images/favicon.ico" type="image/gif" sizes="16x16">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <link href='https://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="~/css/style.css">
+    <link type="text/css" rel="stylesheet" href="~/css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="~/css/timer.css">
+    <link type="text/css" rel="stylesheet" href="~/css/animations.css">
+    <link type="text/css" rel="stylesheet" href="~/css/component.css">
+    <link type="text/css" rel="stylesheet" href="~/css/slick.css">
+    <link type="text/css" rel="stylesheet" href="~/css/slick-theme.css">
+    <link type="text/css" href="~/css/jquery.countdown.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="~/css/gridlayout.css">
+    <link type="text/css" rel="stylesheet" href="~/css/jquery.fancybox.css" media="screen" />
+    <link type="text/css" rel="stylesheet" href="~/css/materialadmin.css">
+    <link type="text/css" rel="stylesheet" href="~/css/font-awesome.css">
+    <link type="text/css" rel="stylesheet" href="~/css/animate.css">
+    <link type="text/css" rel="stylesheet" href="~/css/hover.css">
+    <link type="text/css" rel="stylesheet" href="~/css/slidebars.css">
+    <title>Mayra & Carlos</title>
+    <style>
+        .has-error .form-control:focus ~ label, .has-error .form-control.dirty ~ label {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+
+    @RenderBody()
+
+    <script type="text/javascript" src="~/js/jquery-2.1.4.js"></script>
+    <script type="text/javascript" src="~/js/modernizr.custom.js"></script>
+    <script type="text/javascript" src="~/js/function.js"></script>
+    <script type="text/javascript" src="~/js/bootstrap.js"></script>
+    <script type="text/javascript" src="~/js/slick.js"></script>
+    <script type="text/javascript" src="~/js/easyResponsiveTabs.js"></script>
+    <script type="text/javascript" src="~/js/timer.js"></script>
+    <script type="text/javascript" src="~/js/jquery.final-countdown.js"></script>
+    <script type="text/javascript" src="~/js/jquery.dlmenu.js"></script>
+    <script type="text/javascript" src="~/js/pagetransitions.js"></script>
+    <script type="text/javascript" src="~/js/jquery.countdown.js"></script>
+    <script type="text/javascript" src="~/js/jquery.masonarygrid.js"></script>
+    <script type="text/javascript" src="~/js/jquery.fancybox.js"></script>
+    <script type="text/javascript" src="~/js/menu.js"></script>
+    <script type="text/javascript" src="~/js/wow.js"></script>
+    <script type="text/javascript" src="~/js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="~/js/formValidation.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

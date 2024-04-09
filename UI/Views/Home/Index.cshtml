@@ -1,0 +1,50 @@
+﻿<!--menu bar starts from here-->
+<div class="resonsive-tab">
+    <div class="header">
+        <div class="container">
+            <div class="logo-responsive pull-left"> <a href="index.html"><img src="~/images/logo.png" alt="Logo"></a></div>
+            <div class="hamburger pull-right"> <img src="~/images/1466014460_menu-alt.png" alt="Navicon"> </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<div id="dl-menu" class="section1 navbar navbar-inverse navbar-fixed-left">
+    <div class="logo"> <a href="index.html" data-menu="index"> <img src="~/images/logo.png" alt="Logo" /> </a> </div>
+    <ul class="dl-menu nav navbar-nav menubar vertical_iconmenu">
+        <li data-animation="1" class="active">
+            <partial name="~/Views/Shared/MenuBar/_Home.cshtml" />
+        </li>
+        <li data-animation="2">
+            <partial name="~/Views/Shared/MenuBar/_Couple.cshtml" />
+        </li>
+        <li data-animation="3">
+            <partial name="~/Views/Shared/MenuBar/_Loveline.cshtml" />
+        </li>
+        <li data-animation="4">
+            <partial name="~/Views/Shared/MenuBar/_People.cshtml" />
+        </li>
+        <li data-animation="5">
+            <partial name="~/Views/Shared/MenuBar/_Wedding.cshtml" />
+        </li>
+        <li data-animation="6">
+            <partial name="~/Views/Shared/MenuBar/_Gallery.cshtml" />
+        </li>
+        <li data-animation="7">
+            <partial name="~/Views/Shared/MenuBar/_Rsvp.cshtml" />
+        </li>
+    </ul>
+</div>
+
+
+<div class="main-page-area">
+    <div id="pt-main" class="pt-perspective">
+        <partial name="~/Views/Shared/MainPage/_HomePage.cshtml" />
+        <partial name="~/Views/Shared/MainPage/_Couple.cshtml" />
+        <partial name="~/Views/Shared/MainPage/_Loveline.cshtml" />
+        <partial name="~/Views/Shared/MainPage/_People.cshtml" />
+        <partial name="~/Views/Shared/MainPage/_Wedding.cshtml" />
+        <partial name="~/Views/Shared/MainPage/_Gallery.cshtml" />
+        <partial name="~/Views/Shared/MainPage/_Rsvp.cshtml" />
+    </div>
+</div>
