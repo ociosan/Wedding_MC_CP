@@ -29,6 +29,11 @@ namespace Core.Repository
             return _mapper.Map<List<FamilyDto>>(await _unitOfWork.Family.FindAllAsync(x => x.InvitationCode == invitationCode, _tables));
         }
 
+        public async Task<FamilyDto> GetOneByInvitationCodeAsync(string invitationCode)
+        {
+            return _mapper.Map<FamilyDto>(await _unitOfWork.Family.FindOneAsync(x => x.InvitationCode == invitationCode));
+        }
+
         public async Task CreateAsync(NewFamilyDto familyDto)
         {
             await _unitOfWork.Family.CreateAsync(_mapper.Map<Family>(familyDto));

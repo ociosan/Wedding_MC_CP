@@ -1,0 +1,57 @@
+﻿using Core.Interfaces.Helper;
+using Core.Interfaces.Repository;
+using Core.Interfaces.Service;
+using Data.Dto;
+
+namespace Core.Services
+{
+    public class ConfirmAssistanceService : IConfirmAssistanceService
+    {
+        private readonly IFamilyRepository _familyRepository;
+        private readonly IEmailHelper _emailHelper;
+
+        public ConfirmAssistanceService(IFamilyRepository familyRepository, IEmailHelper emailHelper)
+        {
+            _familyRepository = familyRepository;
+            _emailHelper = emailHelper;
+        }
+
+        public async Task ConfirmAssistanceAsync(string eMailTo, string invitationCode)
+        {
+            FamilyDto familyDto = await _familyRepository.GetOneByInvitationCodeAsync(invitationCode);
+
+            if (familyDto == null)
+                throw new NullReferenceException("No existe información con ese código de Invitación");
+
+
+            /*
+                string generatePdfFile = _pDFHelper.MakePDF(invitationCode, familyDto.LastName, familyDto.FamilyMembers.Select(s => s.Names).ToList());
+                string generatedJpgImage = await _pDFHelper.ConvertPdfToImage(generatePdfFile, invitationCode);
+
+                await _emailHelper.SendEmailAsync(new MailRequestGenericEntity()
+                {
+                    ToEmail = eMailTo,
+                    Subject = "Nuestra Boda - Paola & Aldo",
+                    Body = "<html><body><img src=\"cid:image1\"></body></html>",
+                    InvitationFilePath = generatedJpgImage
+                });
+
+                if(familyDto.ConfirmationDate == null)
+                {
+                    _familyRepository.UpdateFamily(new FamilyDto()
+                    {
+                        Id = familyDto.Id,
+                        InvitationCode = invitationCode,
+                        LastName = familyDto.LastName,
+                        EmailAddress = eMailTo,
+                        ConfirmationDate = DateTime.UtcNow,
+                        AssignedDate = familyDto.AssignedDate
+                    });
+                }
+
+
+                _pDFHelper.DeleteFiles(generatedJpgImage, generatePdfFile);
+             */
+        }
+    }
+}

@@ -1,9 +1,13 @@
 ﻿using Core;
 using Core.AutoMapperProfile;
+using Core.Helpers;
 using Core.Interfaces;
+using Core.Interfaces.Helper;
 using Core.Interfaces.Repository;
+using Core.Interfaces.Service;
 using Core.Middleware;
 using Core.Repository;
+using Core.Services;
 using Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +28,9 @@ namespace API.Extensions
 
             services.AddScoped<IFamilyRepository, FamilyRepository>();
             services.AddScoped<IFamilyMemberRepository, FamilyMemberRepository>();
+            services.AddScoped<IEmailHelper, EmailHelper>();
+            services.AddScoped<IConfirmAssistanceService, ConfirmAssistanceService>();
+
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ErrorHandlingMiddleware>();
