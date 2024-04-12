@@ -12,12 +12,12 @@
             offset: null,
             day: 'Día',
             days: 'Días',
-            hour: 'Hour',
-            hours: 'Hours',
-            minute: 'Minute',
-            minutes: 'Minutes',
-            second: 'Second',
-            seconds: 'Seconds'
+            hour: 'Hora',
+            hours: 'Horas',
+            minute: 'Minuto',
+            minutes: 'Minutos',
+            second: 'Segundo',
+            seconds: 'Segundos'
         }, options);
 
         // Throw error if date is not set

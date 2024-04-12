@@ -17,7 +17,22 @@
                                     </p>
                                     <div id="Success" class="successalert" style=" display:none;"> <strong>Thank you</strong>. </div>
                                     <div id="Error" class="errorelert" style="display:none;"> <strong>Error occurred while sending email.</strong> Try again later. </div>
-                                    <form class="form floating-label text-left form-validate" name="frm" id="frm">
+
+                                    @using (Html.BeginForm("ShowFamilyMembers", "Home", FormMethod.Get, new { @class = "form floating-label text-left form-validate" }))
+                                    {
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="invitationCode" id="invitationCode" required />
+                                            <label for="invitationCode">Código de Invitación</label>
+                                        </div>
+                                        <div class="rsvp-button text-center">
+                                            <button id="sendInvitationCode" type="submit" class="hvr-sweep-to-right">Enviar</button>
+                                            <div id="loding" style="display:none; padding-left:20px;">
+                                                <img src="~/images/ajax-loader.gif" alt="Loader">
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <!--<form class="form floating-label text-left form-validate" name="frm" id="frm">
                                         <div class="form-group">
                                             <input type="text" class="form-control" id="Name" name="Name" required data-rule-minlength="2" />
                                             <label for="Name">Nombre</label>
@@ -62,7 +77,7 @@
                                             <button type="submit" class="hvr-sweep-to-right">Enviar</button>
                                             <div id="loding" style="display:none; padding-left:20px;"><img src="~/images/ajax-loader.gif" alt="Loader"></div>
                                         </div>
-                                    </form>
+                                    </form>-->
                                 </div>
                             </div>
                         </div>

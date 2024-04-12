@@ -16,13 +16,13 @@ namespace API.Controllers
         }
 
         [HttpGet("GetAllByEmailAddresAsync/{emailAddres}")]
-        public async Task<IActionResult> GetAllByEmailAddresAsync([FromRoute] string emailAddres)
+        public async Task<ActionResult<List<FamilyDto>>> GetAllByEmailAddresAsync([FromRoute] string emailAddres)
         {
             return Ok(await _familyRepository.GetAllByEmailAddresAsync(emailAddres));
         }
 
         [HttpGet("GetAllByInvitationCodeAsync/{invitationCode}")]
-        public async Task<IActionResult> GetAllByInvitationCodeAsync([FromRoute] string invitationCode)
+        public async Task<ActionResult<List<FamilyDto>>> GetAllByInvitationCodeAsync([FromRoute] string invitationCode)
         {
             return Ok(await _familyRepository.GetAllByInvitationCodeAsync(invitationCode));
         }
@@ -40,5 +40,12 @@ namespace API.Controllers
             _familyRepository.Update(familyDto);
             return Ok();
         }
+
+        [HttpGet("GetOneByInvitationCodeAsync/{invitationCode}")]
+        public async Task<ActionResult<FamilyDto>> GetOneByInvitationCodeAsync([FromRoute]string invitationCode)
+        {
+            return Ok(await _familyRepository.GetOneByInvitationCodeAsync(invitationCode));
+        }
+
     }
 }

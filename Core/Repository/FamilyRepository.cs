@@ -31,7 +31,7 @@ namespace Core.Repository
 
         public async Task<FamilyDto> GetOneByInvitationCodeAsync(string invitationCode)
         {
-            return _mapper.Map<FamilyDto>(await _unitOfWork.Family.FindOneAsync(x => x.InvitationCode == invitationCode));
+            return _mapper.Map<FamilyDto>(await _unitOfWork.Family.FindOneAsync(x => x.InvitationCode == invitationCode, _tables));
         }
 
         public async Task CreateAsync(NewFamilyDto familyDto)
@@ -45,5 +45,11 @@ namespace Core.Repository
             _unitOfWork.Family.Update(_mapper.Map<Family>(familyDto));
             _unitOfWork.Save();
         }
+
+        public async Task<FamilyDto> GetOneByInvitationCode(string invitationCode)
+        {
+            return _mapper.Map<FamilyDto>(await _unitOfWork.Family.FindOneAsync(x => x.InvitationCode == invitationCode));
+        }
+
     }
 }

@@ -117,8 +117,8 @@ $(document).on('ready', function () {
        $('#example').countdown({
            date: '10/19/2024 13:00:00', //Enter Target date & time - MM/DD/YYYY hh:mm:ss
            offset: (-(today.getTimezoneOffset()/60)),
-           day: 'Day',
-           days: 'Days'
+           day: 'Día',
+           days: 'Días'
        }, function () {
        });
 	}

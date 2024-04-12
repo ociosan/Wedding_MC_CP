@@ -463,49 +463,56 @@ ul .other-menu-2 {
 	top: 0px;
 }
 .bg-loveline {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 .bg-people {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 .bg-wedding {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 .bg-gifts {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 .bg-rsvp {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 .bg-couple {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 .bg-home {
-	background: url(http://placehold.it/1920x1080) no-repeat center center;
+	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/ 
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -2518,7 +2525,7 @@ ul.timeline > li > .timeline-badge {
 }
 .the-people-slider h4 {
 	margin: 0;
-	font-size: 23px;
+	font-size: 18px;
 }
 .the-people .the-couple-img {
 	margin: 25px 0px 21px;

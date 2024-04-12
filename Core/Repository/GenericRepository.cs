@@ -21,9 +21,15 @@ namespace Core.Repository
             await _db.AddAsync(entity);
         }
 
-        public async Task<T> FindOneAsync(Expression<Func<T, bool>> expression)
+        public async Task<T> FindOneAsync(Expression<Func<T, bool>> expression, List<string>? includes = null)
         {
             IQueryable<T> query = _db;
+
+            if (includes != null)
+            {
+                foreach (var table in includes)
+                    query = query.Include(table);
+            }
 
             return await query.FirstAsync(expression);
         }

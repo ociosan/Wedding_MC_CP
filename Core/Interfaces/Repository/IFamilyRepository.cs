@@ -9,5 +9,6 @@ namespace Core.Interfaces.Repository
         Task CreateAsync(NewFamilyDto familyDto);
         Task<FamilyDto> GetOneByInvitationCodeAsync(string invitationCode);
         void Update(FamilyDto familyDto);
+        Task<FamilyDto> GetOneByInvitationCode(string invitationCode);
     }
 }

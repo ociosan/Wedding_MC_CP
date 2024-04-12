@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-    <link rel="icon" href="~/images/favicon.ico" type="image/gif" sizes="16x16">
+    <link rel="icon" href="https://cdn-wedding-mc.azureedge.net/cdn/Logo_NavIcon.png" type="image/gif" sizes="16x16">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
@@ -30,7 +30,19 @@
     </style>
 </head>
 <body>
-
+    <div class="resonsive-tab">
+        <div class="header">
+            <div class="container">
+                <div class="logo-responsive pull-left">
+                    <a onclick="location.href='@Url.Action("ReturnToIndex")'" data-menu="index">
+                        <img src="https://cdn-wedding-mc.azureedge.net/cdn/Logo_NavIcon.png" alt="Logo">
+                    </a>
+                </div>
+                <div class="hamburger pull-right"> <img src="~/images/1466014460_menu-alt.png" alt="Navicon"> </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
     @RenderBody()
 
     <script type="text/javascript" src="~/js/jquery-2.1.4.js"></script>

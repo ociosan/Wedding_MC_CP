@@ -8,7 +8,9 @@ namespace Core.AutoMapperProfile
     {
         public FamilyProfile()
         {
-            CreateMap<Family, FamilyDto>();
+            CreateMap<Family, FamilyDto>()
+                .ForMember(fm => fm.FamilyMembers, s => s.MapFrom(mf => mf.FamilyMembers));
+
             CreateMap<FamilyDto, Family>();
 
             CreateMap<NewFamilyDto, Family>();
