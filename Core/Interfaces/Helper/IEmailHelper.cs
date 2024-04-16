@@ -4,6 +4,6 @@ namespace Core.Interfaces.Helper
 {
     public interface IEmailHelper
     {
-        void SendEmail(MailRequestDto mailRequestDto);
+        Task SendEmailAsync(MailRequestDto mailRequestDto);
     }
 }

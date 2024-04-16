@@ -9,7 +9,7 @@ namespace Data.Dto
         public required string LastName { get; set; }
         public required string EmailAddress { get; set; }
         public DateTime? ConfirmationDate { get; set; }
-        public required ICollection<FamilyMemberDto> FamilyMembers { get; set; }
+        public ICollection<FamilyMemberDto> FamilyMembers { get; set; }
     }
 
     public class NewFamilyDto

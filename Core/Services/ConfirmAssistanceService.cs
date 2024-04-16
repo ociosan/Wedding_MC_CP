@@ -9,11 +9,13 @@ namespace Core.Services
     {
         private readonly IFamilyRepository _familyRepository;
         private readonly IEmailHelper _emailHelper;
+        private readonly IPdfHelper _pdfHelper;
 
-        public ConfirmAssistanceService(IFamilyRepository familyRepository, IEmailHelper emailHelper)
+        public ConfirmAssistanceService(IFamilyRepository familyRepository, IEmailHelper emailHelper, IPdfHelper pdfHelper)
         {
             _familyRepository = familyRepository;
             _emailHelper = emailHelper;
+            _pdfHelper = pdfHelper;
         }
 
         public async Task ConfirmAssistanceAsync(string eMailTo, string invitationCode)
@@ -24,34 +26,29 @@ namespace Core.Services
                 throw new NullReferenceException("No existe información con ese código de Invitación");
 
 
-            /*
-                string generatePdfFile = _pDFHelper.MakePDF(invitationCode, familyDto.LastName, familyDto.FamilyMembers.Select(s => s.Names).ToList());
-                string generatedJpgImage = await _pDFHelper.ConvertPdfToImage(generatePdfFile, invitationCode);
+           
+            string generatePdfFile = _pdfHelper.MakePDF(invitationCode, familyDto.LastName, familyDto.FamilyMembers.Select(s => s.Names).ToList());
+            string generatedJpgImage = await _pdfHelper.ConvertPdfToImage(generatePdfFile, invitationCode);
 
-                await _emailHelper.SendEmailAsync(new MailRequestGenericEntity()
+            await _emailHelper.SendEmailAsync(new MailRequestDto(
+
+                eMailTo,
+                "Nuestra Boda - Mayra & Carlos",
+                "<html><body><img src=\"cid:image1\"></body></html>",
+                generatedJpgImage
+            ));
+
+            if(familyDto.ConfirmationDate == null)
+            {
+                _familyRepository.Update(new FamilyDto()
                 {
-                    ToEmail = eMailTo,
-                    Subject = "Nuestra Boda - Paola & Aldo",
-                    Body = "<html><body><img src=\"cid:image1\"></body></html>",
-                    InvitationFilePath = generatedJpgImage
+                    Id = familyDto.Id,
+                    InvitationCode = invitationCode,
+                    LastName = familyDto.LastName,
+                    EmailAddress = eMailTo,
+                    ConfirmationDate = DateTime.UtcNow
                 });
-
-                if(familyDto.ConfirmationDate == null)
-                {
-                    _familyRepository.UpdateFamily(new FamilyDto()
-                    {
-                        Id = familyDto.Id,
-                        InvitationCode = invitationCode,
-                        LastName = familyDto.LastName,
-                        EmailAddress = eMailTo,
-                        ConfirmationDate = DateTime.UtcNow,
-                        AssignedDate = familyDto.AssignedDate
-                    });
-                }
-
-
-                _pDFHelper.DeleteFiles(generatedJpgImage, generatePdfFile);
-             */
+            }
         }
     }
 }

@@ -512,7 +512,7 @@ ul .other-menu-2 {
 }
 .bg-home {
 	/*background: url(http://placehold.it/1920x1080) no-repeat center center;*/ 
-	background: url(https://cdn-wedding-mc.azureedge.net/cdn/5.png) no-repeat center center;
+	background: url(https://cdn-wedding-mc.azureedge.net/cdn/homepage.png) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -528,6 +528,14 @@ ul .other-menu-2 {
 	width: 100%;
 	background-color: rgba(97,69,44,0.6);
 }
+
+.bg-main-image-overlay-homepage {
+	height: 100%;
+	width: 100%;
+}
+
+
+
 .bg-main-image-overlay-2 {
 	background-color: rgba(255,255,255,0.6);
 	width: 100%;

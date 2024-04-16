@@ -1,4 +1,6 @@
-﻿using Core;
+﻿using Azure.Interfaces.Repository;
+using Azure.Repository;
+using Core;
 using Core.AutoMapperProfile;
 using Core.Helpers;
 using Core.Interfaces;
@@ -10,6 +12,7 @@ using Core.Repository;
 using Core.Services;
 using Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 
 namespace API.Extensions
 {
@@ -17,14 +20,15 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-            //Use this when using AzureKeyVault
-            /*services.AddAzureClients(azureClientFactoryBuilder => {
+            services.AddAzureClients(azureClientFactoryBuilder => {
                 azureClientFactoryBuilder.AddSecretClient(config.GetSection("KeyVault"));
 
-            });*/
+            });
             services.AddDbContext<WeddingDBContext>(options => {
                 options.UseSqlServer(config.GetConnectionString("DefaultDBConnection"));
             });
+
+            services.AddSingleton<IKeyVaultRepository, KeyVaultRepository>();
 
             services.AddScoped<IFamilyRepository, FamilyRepository>();
             services.AddScoped<IFamilyMemberRepository, FamilyMemberRepository>();
