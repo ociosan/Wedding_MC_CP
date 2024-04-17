@@ -2,7 +2,7 @@
 {
     public interface IPdfHelper
     {
-        string MakePDF(string invitationCode, string lastName, List<string> members);
+        Task<string> MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate);
         Task<string> ConvertPdfToImage(string sourceFilePath, string invitationCode);
     }
 }

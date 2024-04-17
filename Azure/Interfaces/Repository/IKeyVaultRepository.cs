@@ -2,6 +2,6 @@
 {
     public interface IKeyVaultRepository
     {
-        Task<string> GetSecretAsync(string secretName)
+        Task<string> GetSecretAsync(string secretName);
     }
 }

@@ -11,21 +11,22 @@ namespace Core.Helpers
     public class PdfHelper : IPdfHelper
     {
         private readonly IKeyVaultRepository _keyVaultRepository;
+        private readonly IStorageAccountRepository _storageAccountRepository;
 
-        public PdfHelper(IKeyVaultRepository keyVaultRepository)
+        public PdfHelper(IKeyVaultRepository keyVaultRepository, IStorageAccountRepository storageAccountRepository)
         {
             _keyVaultRepository = keyVaultRepository;
+            _storageAccountRepository = storageAccountRepository;
         }
 
-        public string MakePDF(string invitationCode, string lastName, List<string> members)
+        public async Task<string> MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate)
         {
-            string oldFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"HtmlTemplates\Boletos_3.pdf");
-            string watermarkedFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\{invitationCode}.pdf");
+            string familyInvitationFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\{invitationCode}.pdf"); //CREATE NEW FILE
 
             // Creating watermark on a separate layer
             // Creating iTextSharp.text.pdf.PdfReader object to read the Existing PDF Document
-            PdfReader reader1 = new PdfReader(oldFile);
-            using (FileStream fs = new FileStream(watermarkedFile, FileMode.Create, FileAccess.Write, FileShare.Delete))
+            PdfReader reader1 = new PdfReader(invitationCodeTemplate);
+            using (FileStream fs = new FileStream(familyInvitationFile, FileMode.Create, FileAccess.Write, FileShare.Delete))
             // Creating iTextSharp.text.pdf.PdfStamper object to write Data from iTextSharp.text.pdf.PdfReader object to FileStream object
             using (PdfStamper stamper = new PdfStamper(reader1, fs))
             {
@@ -84,12 +85,20 @@ namespace Core.Helpers
                 }
             }
 
-            return watermarkedFile;
+
+            await using (Stream fileStream = File.OpenRead(familyInvitationFile))
+            {
+                await _storageAccountRepository.UploadInvitationCodeAsync(fileStream, invitationCode);
+                File.Delete(familyInvitationFile);
+            }
+
+
+            return familyInvitationFile;
         }
 
         public async Task<string> ConvertPdfToImage(string sourceFilePath, string invitationCode)
         {
-            string destinationFilePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\");
+            string destinationFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\");
             string destinationFileName = destinationFilePath + invitationCode + ".jpg";
 
             using (FileStream fs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read))

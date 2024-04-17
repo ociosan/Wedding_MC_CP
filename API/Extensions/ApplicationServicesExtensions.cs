@@ -1,4 +1,5 @@
-﻿using Azure.Interfaces.Repository;
+﻿using Azure.Core;
+using Azure.Interfaces.Repository;
 using Azure.Repository;
 using Core;
 using Core.AutoMapperProfile;
@@ -22,17 +23,19 @@ namespace API.Extensions
         {
             services.AddAzureClients(azureClientFactoryBuilder => {
                 azureClientFactoryBuilder.AddSecretClient(config.GetSection("KeyVault"));
-
+                azureClientFactoryBuilder.AddBlobServiceClient(config.GetSection("StorageAccount"));
             });
             services.AddDbContext<WeddingDBContext>(options => {
                 options.UseSqlServer(config.GetConnectionString("DefaultDBConnection"));
             });
 
             services.AddSingleton<IKeyVaultRepository, KeyVaultRepository>();
+            services.AddSingleton<IStorageAccountRepository, StorageAccountRepository>();
 
             services.AddScoped<IFamilyRepository, FamilyRepository>();
             services.AddScoped<IFamilyMemberRepository, FamilyMemberRepository>();
             services.AddScoped<IEmailHelper, EmailHelper>();
+            services.AddScoped<IPdfHelper, PdfHelper>();
             services.AddScoped<IConfirmAssistanceService, ConfirmAssistanceService>();
 
 

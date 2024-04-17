@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Helper;
+﻿using Azure.Interfaces.Repository;
+using Core.Interfaces.Helper;
 using Core.Interfaces.Repository;
 using Core.Interfaces.Service;
 using Data.Dto;
@@ -10,12 +11,14 @@ namespace Core.Services
         private readonly IFamilyRepository _familyRepository;
         private readonly IEmailHelper _emailHelper;
         private readonly IPdfHelper _pdfHelper;
+        private readonly IStorageAccountRepository _storageAccountRepository;
 
-        public ConfirmAssistanceService(IFamilyRepository familyRepository, IEmailHelper emailHelper, IPdfHelper pdfHelper)
+        public ConfirmAssistanceService(IFamilyRepository familyRepository, IEmailHelper emailHelper, IPdfHelper pdfHelper, IStorageAccountRepository storageAccountRepository)
         {
             _familyRepository = familyRepository;
             _emailHelper = emailHelper;
             _pdfHelper = pdfHelper;
+            _storageAccountRepository = storageAccountRepository;
         }
 
         public async Task ConfirmAssistanceAsync(string eMailTo, string invitationCode)
@@ -25,9 +28,9 @@ namespace Core.Services
             if (familyDto == null)
                 throw new NullReferenceException("No existe información con ese código de Invitación");
 
+            byte[] invitationPdfTemplate = await _storageAccountRepository.DownloadInvitationTemplateAsync();
 
-           
-            string generatePdfFile = _pdfHelper.MakePDF(invitationCode, familyDto.LastName, familyDto.FamilyMembers.Select(s => s.Names).ToList());
+            string generatePdfFile = await _pdfHelper.MakePDF(invitationCode, familyDto.LastName, familyDto.FamilyMembers.Select(s => s.Names).ToList(), invitationPdfTemplate);
             string generatedJpgImage = await _pdfHelper.ConvertPdfToImage(generatePdfFile, invitationCode);
 
             await _emailHelper.SendEmailAsync(new MailRequestDto(
