@@ -1,4 +1,5 @@
 ﻿using Azure.Interfaces.Repository;
+using Core.Enum;
 using Core.Interfaces.Helper;
 using Core.Interfaces.Repository;
 using Core.Interfaces.Service;
@@ -28,20 +29,21 @@ namespace Core.Services
             if (familyDto == null)
                 throw new NullReferenceException("No existe información con ese código de Invitación");
 
-            byte[] invitationPdfTemplate = await _storageAccountRepository.DownloadInvitationTemplateAsync();
-
-            string generatePdfFile = await _pdfHelper.MakePDF(invitationCode, familyDto.LastName, familyDto.FamilyMembers.Select(s => s.Names).ToList(), invitationPdfTemplate);
-            string generatedJpgImage = await _pdfHelper.ConvertPdfToImage(generatePdfFile, invitationCode);
+            await _pdfHelper.MakePDF(
+                invitationCode, 
+                familyDto.LastName, 
+                familyDto.FamilyMembers.Select(s => s.Names).ToList(), 
+                await _storageAccountRepository.DownloadInvitationTemplateAsync());
 
             await _emailHelper.SendEmailAsync(new MailRequestDto(
 
                 eMailTo,
                 "Nuestra Boda - Mayra & Carlos",
                 "<html><body><img src=\"cid:image1\"></body></html>",
-                generatedJpgImage
+                await _pdfHelper.ConvertPdfToImage(invitationCode)
             ));
 
-            if(familyDto.ConfirmationDate == null)
+            /*if(familyDto.ConfirmationDate == null)
             {
                 _familyRepository.Update(new FamilyDto()
                 {
@@ -51,7 +53,18 @@ namespace Core.Services
                     EmailAddress = eMailTo,
                     ConfirmationDate = DateTime.UtcNow
                 });
-            }
+            }*/
+        }
+
+        public async Task ReSendEmailAsync(string eMailTo, string invitationCode)
+        {
+            await using Stream stream = new MemoryStream(await _storageAccountRepository.DownloadInvitationAsync(invitationCode, FileTypeEnum.Jpg));
+            await _emailHelper.SendEmailAsync(new MailRequestDto(
+                eMailTo,
+                "Nuestra Boda - Mayra & Carlos",
+                "<html><body><img src=\"cid:image1\"></body></html>",
+                stream
+            ));
         }
     }
 }

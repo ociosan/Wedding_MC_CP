@@ -26,16 +26,30 @@ namespace Azure.Repository
             return theInvitationBytes;
         }
 
-        public async Task UploadInvitationCodeAsync(Stream fileContent, string invitationCode)
+        public async Task UploadInvitationCodeAsync(Stream fileContent, string invitationCode, string fileType)
         {
-            await using (Stream str = fileContent)
-            {
-                var client = _blobServiceClient.GetBlobContainerClient("invitations").GetBlobClient($"{invitationCode}.pdf");
-                await client.UploadAsync(str, overwrite: true);
-            }
+            await using Stream str = fileContent;
+            var client = _blobServiceClient.GetBlobContainerClient("invitations").GetBlobClient($"{invitationCode}.{fileType}");
+            await client.UploadAsync(str, overwrite: true);
         }
 
-        //hacer método para descargar bytes del pdf creado 
+
+        public async Task<byte[]> DownloadInvitationAsync(string invitationCode, string fileType)
+        {
+            byte[] theInvitationBytes;
+
+            await using (MemoryStream memoryStream = new())
+            {
+                var client = _blobServiceClient
+                        .GetBlobContainerClient("invitations")
+                        .GetBlobClient($"{invitationCode}.{fileType}");
+
+                await client.DownloadToAsync(memoryStream);
+                theInvitationBytes = memoryStream.ToArray();
+            }
+
+            return theInvitationBytes;
+        }
 
     }
 }

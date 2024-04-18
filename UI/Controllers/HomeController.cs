@@ -44,11 +44,16 @@ namespace UI.Controllers
         }
 
         [HttpPost("ConfirmAssistance")]
-        public IActionResult ConfirmAssistance(string email, string invitationCode)
+        public async Task<IActionResult> ConfirmAssistance(string email, string invitationCode)
         {
-            //await WebApiClientSingleton.GetInstance.ConfirmAssistanceAsync(email, invitationCode);
-
+            await WebApiClientSingleton.GetInstance.ConfirmAssistanceAsync(email, invitationCode);
             return View("Index");
+        }
+
+        [HttpGet("ShowAttendees")]
+        public ActionResult ShowAttendees(string password)
+        {
+            return View("Administration");
         }
 
     }

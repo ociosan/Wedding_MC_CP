@@ -19,5 +19,12 @@ namespace API.Controllers
             await _confirmAssistanceService.ConfirmAssistanceAsync(emailTo, invitationCode);
             return Ok();
         }
+
+        [HttpPost("ResendEmailAsync/{emailTo}/{invitationCode}")]
+        public async Task<IActionResult> ResendEmailAsync(string emailTo, string invitationCode)
+        {
+            await _confirmAssistanceService.ReSendEmailAsync(emailTo, invitationCode);  
+            return Ok();
+        }
     }
 }

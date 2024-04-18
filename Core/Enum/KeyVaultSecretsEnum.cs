@@ -1,4 +1,4 @@
-﻿namespace Azure.Enum
+﻿namespace Core.Enum
 {
     public static class KeyVaultSecretsEnum
     {

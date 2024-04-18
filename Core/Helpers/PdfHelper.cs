@@ -3,7 +3,7 @@ using System.Reflection;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
 using ConvertApiDotNet;
-using Azure.Enum;
+using Core.Enum;
 using Core.Interfaces.Helper;
 
 namespace Core.Helpers
@@ -19,7 +19,7 @@ namespace Core.Helpers
             _storageAccountRepository = storageAccountRepository;
         }
 
-        public async Task<string> MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate)
+        public async Task MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate)
         {
             string familyInvitationFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\{invitationCode}.pdf"); //CREATE NEW FILE
 
@@ -39,7 +39,7 @@ namespace Core.Helpers
                 for (int i = 1; i <= pageCount; i++)
                 {
                     // Getting the Page Size
-                    iTextSharp.text.Rectangle rect = reader1.GetPageSize(i);
+                    Rectangle rect = reader1.GetPageSize(i);
 
                     // Get the ContentByte object
                     PdfContentByte cb = stamper.GetOverContent(i);
@@ -47,36 +47,24 @@ namespace Core.Helpers
                     // Tell the cb that the next commands should be "bound" to this new layer
                     cb.BeginLayer(layer);
 
-                    BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
                     cb.SetColorFill(new BaseColor(0, 33, 71));
                     cb.SetFontAndSize(bf, 11);
                     cb.SetWordSpacing(3);
 
                     cb.BeginText();
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, invitationCode, 119, 243, 0);
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, lastName, 53, 194, 0);
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, invitationCode, 92, 208, 0);
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, lastName, 200, 208, 0);
 
 
                     //cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"width: {rect.Width} - Height: {rect.Height}" , 50, 50, 0);
 
-                    int firstPos = 208;
+                    int firstPos = 162;
                     foreach (string member in members)
                     {
-                        cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, member, 185, firstPos - 14, 0);
-                        firstPos = firstPos - 14;
+                        cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, member, 148, firstPos - 14, 0);
+                        firstPos -= 14;
                     }
-
-                    var anchor = new Chunk("View our Portfolio")
-                    {
-                        Font = new Font(
-                            Font.FontFamily.HELVETICA, 25,
-                            Font.NORMAL,
-                            BaseColor.BLUE
-                        )
-                    };
-
-                    // [2] set the anchor URL
-                    anchor.SetAnchor("http://portfolio.xxxxx.com/");
 
                     cb.EndText();
 
@@ -84,46 +72,29 @@ namespace Core.Helpers
                     cb.EndLayer();
                 }
             }
-
-
             await using (Stream fileStream = File.OpenRead(familyInvitationFile))
             {
-                await _storageAccountRepository.UploadInvitationCodeAsync(fileStream, invitationCode);
+                await _storageAccountRepository.UploadInvitationCodeAsync(fileStream, invitationCode, FileTypeEnum.Pdf);
                 File.Delete(familyInvitationFile);
             }
-
-
-            return familyInvitationFile;
         }
 
-        public async Task<string> ConvertPdfToImage(string sourceFilePath, string invitationCode)
+        public async Task<Stream> ConvertPdfToImage(string invitationCode)
         {
-            string destinationFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\");
-            string destinationFileName = destinationFilePath + invitationCode + ".jpg";
+            //Download the new pdf that was created
+            byte[] invitationAsPdf = await _storageAccountRepository.DownloadInvitationAsync(invitationCode, FileTypeEnum.Pdf);
+            Stream outputJpgFile;
 
-            using (FileStream fs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read))
+            await using (Stream stream = new MemoryStream(invitationAsPdf))
             {
-                MemoryStream pdfMs = new MemoryStream();
-                fs.CopyTo(pdfMs);
-
-                Stream stream = new MemoryStream(pdfMs.ToArray());
-
-                var convertApi = new ConvertApi(await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.ConvertApiSecret));
-
-                //PDF to JPG  Read more https://www.convertapi.com/html-to-pdf
-                var convertToJPG = await convertApi.ConvertAsync("pdf", "jpg",
-                    new ConvertApiFileParam(stream, invitationCode + ".pdf")
-                );
-
-                var outputStream = await convertToJPG.Files[0].FileStreamAsync();
-                using (FileStream outputFileStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write, FileShare.Delete))
-                {
-                    outputStream.CopyTo(outputFileStream);
-                }
+                var convertApi = new ConvertApi("ZLLcsWP6MHe3i2NQ"/*await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.ConvertApiSecret)*/);
+                var convertToJPG = await convertApi.ConvertAsync(fromFormat: FileTypeEnum.Pdf, toFormat: FileTypeEnum.Jpg, new ConvertApiFileParam(stream, $"{invitationCode}.{FileTypeEnum.Pdf}"));
+                outputJpgFile = await convertToJPG.Files[0].FileStreamAsync();
             }
 
-            return destinationFileName;
+            //upload the new jpg image to the storage account
+            await _storageAccountRepository.UploadInvitationCodeAsync(outputJpgFile, invitationCode, FileTypeEnum.Jpg);
+            return outputJpgFile;
         }
-
     }
 }
