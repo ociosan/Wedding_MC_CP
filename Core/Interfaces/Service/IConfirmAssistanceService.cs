@@ -1,8 +1,10 @@
-﻿namespace Core.Interfaces.Service
+﻿using Data.Dto;
+
+namespace Core.Interfaces.Service
 {
     public interface IConfirmAssistanceService
     {
-        Task ConfirmAssistanceAsync(string eMailTo, string invitationCode);
-        Task ReSendEmailAsync(string eMailTo, string invitationCode);
+        Task ConfirmAssistanceAsync(ConfirmAssitanceDto confirmAssitanceDto);
+        Task ReSendEmailAsync(ConfirmAssitanceDto confirmAssitanceDto);
     }
 }

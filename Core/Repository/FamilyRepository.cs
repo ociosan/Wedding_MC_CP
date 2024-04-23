@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Core.Interfaces;
 using Core.Interfaces.Repository;
+using Core.Interfaces.UnitOfWork;
 using Data.Dto;
 using Data.Entities;
 
@@ -8,11 +8,11 @@ namespace Core.Repository
 {
     public class FamilyRepository : IFamilyRepository
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWeddingDbUow _unitOfWork;
         private readonly IMapper _mapper;
         private List<string> _tables;
 
-        public FamilyRepository(IUnitOfWork unitOfWork, IMapper mapper)
+        public FamilyRepository(IWeddingDbUow unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

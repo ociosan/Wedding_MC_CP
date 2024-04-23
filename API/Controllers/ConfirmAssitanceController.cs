@@ -1,5 +1,5 @@
 ﻿using Core.Interfaces.Service;
-using Microsoft.AspNetCore.Http;
+using Data.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -13,17 +13,17 @@ namespace API.Controllers
             _confirmAssistanceService = confirmAssistanceService;
         }
 
-        [HttpPost("ConfirmAssistanceAsync/{emailTo}/{invitationCode}")]
-        public async Task<IActionResult> ConfirmAssistanceAsync(string emailTo, string invitationCode)
+        [HttpPost("ConfirmAssistanceAsync")]
+        public async Task<IActionResult> ConfirmAssistanceAsync([FromBody] ConfirmAssitanceDto confirmAssitanceDto)
         {
-            await _confirmAssistanceService.ConfirmAssistanceAsync(emailTo, invitationCode);
+            await _confirmAssistanceService.ConfirmAssistanceAsync(confirmAssitanceDto);
             return Ok();
         }
 
         [HttpPost("ResendEmailAsync/{emailTo}/{invitationCode}")]
-        public async Task<IActionResult> ResendEmailAsync(string emailTo, string invitationCode)
+        public async Task<IActionResult> ResendEmailAsync([FromBody] ConfirmAssitanceDto confirmAssitanceDto)
         {
-            await _confirmAssistanceService.ReSendEmailAsync(emailTo, invitationCode);  
+            await _confirmAssistanceService.ReSendEmailAsync(confirmAssitanceDto);
             return Ok();
         }
     }

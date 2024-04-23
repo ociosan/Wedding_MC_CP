@@ -10,6 +10,8 @@ namespace Data.Entities
         public required string LastName { get; set; }
         [MaxLength(256)]
         public string? EmailAddress { get; set; }
+        [MaxLength(12)]
+        public string? PhoneNumber { get; set; }
         public DateTime? ConfirmationDate { get; set; }
         public required ICollection<FamilyMember> FamilyMembers { get; set; }
     }

@@ -49,12 +49,5 @@ namespace UI.Controllers
             await WebApiClientSingleton.GetInstance.ConfirmAssistanceAsync(email, invitationCode);
             return View("Index");
         }
-
-        [HttpGet("ShowAttendees")]
-        public ActionResult ShowAttendees(string password)
-        {
-            return View("Administration");
-        }
-
     }
 }

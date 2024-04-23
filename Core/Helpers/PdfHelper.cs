@@ -1,26 +1,27 @@
-﻿using Azure.Interfaces.Repository;
-using System.Reflection;
+﻿using System.Reflection;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
 using ConvertApiDotNet;
 using Core.Enum;
 using Core.Interfaces.Helper;
+using Core.Interfaces.UnitOfWork;
 
 namespace Core.Helpers
 {
     public class PdfHelper : IPdfHelper
     {
-        private readonly IKeyVaultRepository _keyVaultRepository;
-        private readonly IStorageAccountRepository _storageAccountRepository;
+        private readonly IAzureUow _azureUow;
 
-        public PdfHelper(IKeyVaultRepository keyVaultRepository, IStorageAccountRepository storageAccountRepository)
+        public PdfHelper(IAzureUow azureUow)
         {
-            _keyVaultRepository = keyVaultRepository;
-            _storageAccountRepository = storageAccountRepository;
+            _azureUow = azureUow;
         }
 
         public async Task MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate)
         {
+            if(await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Pdf))
+                return;
+
             string familyInvitationFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\{invitationCode}.pdf"); //CREATE NEW FILE
 
             // Creating watermark on a separate layer
@@ -74,26 +75,30 @@ namespace Core.Helpers
             }
             await using (Stream fileStream = File.OpenRead(familyInvitationFile))
             {
-                await _storageAccountRepository.UploadInvitationCodeAsync(fileStream, invitationCode, FileTypeEnum.Pdf);
+                await _azureUow.StorageAccount.UploadInvitationCodeAsync(fileStream, invitationCode, FileTypeEnum.Pdf);
                 File.Delete(familyInvitationFile);
             }
         }
 
         public async Task<Stream> ConvertPdfToImage(string invitationCode)
         {
+
+            if (await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Jpg))
+                return new MemoryStream(await _azureUow.StorageAccount.DownloadInvitationAsync(invitationCode, FileTypeEnum.Jpg));
+
             //Download the new pdf that was created
-            byte[] invitationAsPdf = await _storageAccountRepository.DownloadInvitationAsync(invitationCode, FileTypeEnum.Pdf);
+            byte[] invitationAsPdf = await _azureUow.StorageAccount.DownloadInvitationAsync(invitationCode, FileTypeEnum.Pdf);
             Stream outputJpgFile;
 
             await using (Stream stream = new MemoryStream(invitationAsPdf))
             {
-                var convertApi = new ConvertApi("ZLLcsWP6MHe3i2NQ"/*await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.ConvertApiSecret)*/);
+                var convertApi = new ConvertApi(await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.ConvertApiSecret));
                 var convertToJPG = await convertApi.ConvertAsync(fromFormat: FileTypeEnum.Pdf, toFormat: FileTypeEnum.Jpg, new ConvertApiFileParam(stream, $"{invitationCode}.{FileTypeEnum.Pdf}"));
                 outputJpgFile = await convertToJPG.Files[0].FileStreamAsync();
             }
 
             //upload the new jpg image to the storage account
-            await _storageAccountRepository.UploadInvitationCodeAsync(outputJpgFile, invitationCode, FileTypeEnum.Jpg);
+            await _azureUow.StorageAccount.UploadInvitationCodeAsync(outputJpgFile, invitationCode, FileTypeEnum.Jpg);
             return outputJpgFile;
         }
     }

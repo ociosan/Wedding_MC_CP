@@ -3,17 +3,17 @@ using Data;
 using System;
 using Core.Interfaces.Repository;
 using Core.Repository;
-using Core.Interfaces;
+using Core.Interfaces.UnitOfWork;
 
-namespace Core
+namespace Core.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class WeddingDbUow : IWeddingDbUow
     {
         private readonly WeddingDBContext _weddingDBContext;
         private IGenericRepository<Family>? _family;
         private IGenericRepository<FamilyMember>? _familyMember;
 
-        public UnitOfWork(WeddingDBContext weddingDBContext)
+        public WeddingDbUow(WeddingDBContext weddingDBContext)
         {
             _weddingDBContext = weddingDBContext;
         }

@@ -51,5 +51,13 @@ namespace Azure.Repository
             return theInvitationBytes;
         }
 
+        public async Task<bool> FileExistsAsync(string invitationCode, string fileType)
+        {
+            return await _blobServiceClient
+                .GetBlobContainerClient("invitations")
+                .GetBlobClient($"{invitationCode}.{fileType}")
+                .ExistsAsync();
+        }
+
     }
 }

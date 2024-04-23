@@ -3,29 +3,29 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Net;
 using Core.Interfaces.Helper;
-using Azure.Interfaces.Repository;
 using Core.Enum;
+using Core.Interfaces.UnitOfWork;
 
 namespace Core.Helpers
 {
     public class EmailHelper : IEmailHelper
     {
-        private readonly IKeyVaultRepository _keyVaultRepository;
+        private readonly IAzureUow _azureUow;
 
-        public EmailHelper(IKeyVaultRepository keyVaultRepository)
+        public EmailHelper(IAzureUow azureUow)
         {
-            _keyVaultRepository = keyVaultRepository;
+            _azureUow = azureUow;
         }
 
         public async Task SendEmailAsync(MailRequestDto mailRequestDto)
         {
-            string mail = "nuestraboda@mayra-y-carlos.com";//await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.Mail);
+            string mail = await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.Mail);
 
             SmtpClient client = new SmtpClient();
-            client.Host = "smtpout.secureserver.net";//await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.Host);
-            client.Port = 587;//int.Parse(await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.Port));
+            client.Host = await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.Host);
+            client.Port = int.Parse(await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.Port));
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new NetworkCredential(mail, "M4yr4IC4rl0s.c0m" /*await _keyVaultRepository.GetSecretAsync(KeyVaultSecretsEnum.Password)*/);
+            client.Credentials = new NetworkCredential(mail, await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.Password));
             client.EnableSsl = true;
 
             MailMessage message = new MailMessage();
@@ -41,7 +41,7 @@ namespace Core.Helpers
 
             message.Attachments.Add(imageAttachment);
 
-            client.Send(message);
+            await client.SendMailAsync(message);
         }
     }
 }

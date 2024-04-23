@@ -1,9 +1,9 @@
 ﻿using Core.Interfaces.Repository;
 using Data.Entities;
 
-namespace Core.Interfaces
+namespace Core.Interfaces.UnitOfWork
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IWeddingDbUow : IDisposable
     {
         public IGenericRepository<Family> Family { get; }
         public IGenericRepository<FamilyMember> FamilyMember { get; }

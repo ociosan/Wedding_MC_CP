@@ -1,16 +1,15 @@
-﻿using Azure.Core;
-using Azure.Interfaces.Repository;
+﻿using Azure.Interfaces.Repository;
 using Azure.Repository;
-using Core;
 using Core.AutoMapperProfile;
 using Core.Helpers;
-using Core.Interfaces;
 using Core.Interfaces.Helper;
 using Core.Interfaces.Repository;
 using Core.Interfaces.Service;
+using Core.Interfaces.UnitOfWork;
 using Core.Middleware;
 using Core.Repository;
 using Core.Services;
+using Core.UnitOfWork;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
@@ -39,7 +38,10 @@ namespace API.Extensions
             services.AddScoped<IConfirmAssistanceService, ConfirmAssistanceService>();
 
 
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IWeddingDbUow, WeddingDbUow>();
+            services.AddTransient<IAzureUow, AzureUow>();
+            services.AddTransient<IHelpersUow, HelpersUow>();
+
             services.AddTransient<ErrorHandlingMiddleware>();
             services.AddAutoMapper(typeof(FamilyProfile).Assembly);
             services.AddAutoMapper(typeof(FamilyMemberProfile).Assembly);
