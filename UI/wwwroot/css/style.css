@@ -2842,3 +2842,14 @@ ul.timeline > li > .timeline-badge {
 	left: 42%;
 }
 }
+
+.events-section .event .see-location-btn {
+	font-weight: 600;
+	color: #fca311;
+	display: inline-block;
+	margin-top: 5px;
+}
+
+	.events-section .event .see-location-btn:hover {
+		color: #e5e5e5;
+	}

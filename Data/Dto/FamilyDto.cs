@@ -1,5 +1,4 @@
-﻿using Data.Entities;
-
+﻿
 namespace Data.Dto
 {
     public class FamilyDto
@@ -8,6 +7,7 @@ namespace Data.Dto
         public required string InvitationCode { get; set; }
         public required string LastName { get; set; }
         public required string EmailAddress { get; set; }
+        public string? PhoneNumber { get; set; }
         public DateTime? ConfirmationDate { get; set; }
         public ICollection<FamilyMemberDto> FamilyMembers { get; set; }
     }

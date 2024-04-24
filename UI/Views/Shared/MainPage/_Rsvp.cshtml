@@ -15,14 +15,13 @@
                                         Confirma tu asistencia antes del día <br>
                                         <span>19 de Septiembre</span>
                                     </p>
-                                    <div id="Success" class="successalert" style=" display:none;"> <strong>Thank you</strong>. </div>
-                                    <div id="Error" class="errorelert" style="display:none;"> <strong>Error occurred while sending email.</strong> Try again later. </div>
-
-                                    @using (Html.BeginForm("ShowFamilyMembers", "Home", FormMethod.Get, new { @class = "form floating-label text-left form-validate" }))
-                                    {
+                                    <div id="Success" class="successalert" style=" display:none;"> <strong>Gracias</strong>. </div>
+                                    <div id="Error" class="errorelert" style="display:none;"> <strong>Hubo un error al confirmar.</strong> Inténtalo Después. </div>
+                                    
+                                    <form class="form floating-label text-left form-validate" name="frmSearchFamilyDetails" id="frmSearchFamilyDetails" method="get">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" name="invitationCode" id="invitationCode" required />
-                                            <label for="invitationCode">Código de Invitación</label>
+                                            <input type="text" class="form-control" name="invitationCodeToConfirm" id="invitationCodeToConfirm" required />
+                                            <label for="invitationCodeToConfirm">Código de Invitación</label>
                                         </div>
                                         <div class="rsvp-button text-center">
                                             <button id="sendInvitationCode" type="submit" class="hvr-sweep-to-right">Enviar</button>
@@ -30,7 +29,7 @@
                                                 <img src="~/images/ajax-loader.gif" alt="Loader">
                                             </div>
                                         </div>
-                                    }
+                                    </form>
                                 </div>
                             </div>
                         </div>

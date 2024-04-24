@@ -3,7 +3,6 @@ using Core.Interfaces.Repository;
 using Core.Interfaces.Service;
 using Core.Interfaces.UnitOfWork;
 using Data.Dto;
-using Microsoft.IdentityModel.Protocols;
 
 namespace Core.Services
 {
@@ -55,6 +54,7 @@ namespace Core.Services
                     InvitationCode = confirmAssitanceDto.InvitationCode,
                     LastName = familyDto.LastName,
                     EmailAddress = confirmAssitanceDto.Email,
+                    PhoneNumber = confirmAssitanceDto.PhoneNumber,
                     ConfirmationDate = DateTime.UtcNow
                 });
             }

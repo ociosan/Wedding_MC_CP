@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using UI.Models;
 using UI.Singletons;
+using Wedding.Api;
 
 namespace UI.Controllers
 {
@@ -36,18 +37,42 @@ namespace UI.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpGet("ShowFamilyMembers")]
-        public async Task<IActionResult> ShowFamilyMembers(string invitationCode)
+        [HttpGet("ShowMembers/{invitationcode}")]
+        public IActionResult ShowMembers(string invitationCodeToConfirm)
         {
-            var result = await WebApiClientSingleton.GetInstance.GetOneByInvitationCodeAsync(invitationCode);
-            return View(new FamilyModel(result));
+            if (string.IsNullOrEmpty(invitationCodeToConfirm))
+                return View();
+
+            return Json(new { redirectToUrl = $"ShowFamilyMembers?invitationcode={invitationCodeToConfirm}" });
         }
 
-        [HttpPost("ConfirmAssistance")]
-        public async Task<IActionResult> ConfirmAssistance(string email, string invitationCode)
+        [HttpGet("ShowFamilyMembers")]
+        public async Task<IActionResult> ShowFamilyMembers([FromQuery] string invitationcode)
         {
-            await WebApiClientSingleton.GetInstance.ConfirmAssistanceAsync(email, invitationCode);
-            return View("Index");
+            var result = await WebApiClientSingleton.GetInstance.GetOneByInvitationCodeAsync(invitationcode);
+
+            if(result != null)
+                return View(new FamilyModel(result));
+
+            return Json(new { redirectToUrl = "/" });
+        }
+
+        [HttpPost("ConfirmAssistance/{email}/{invitationCode}/{phoneNumber}")]
+        public async Task<IActionResult> ConfirmAssistance(string email, string invitationCode, string phoneNumber)
+        {
+            if(!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(phoneNumber))
+            {
+                await WebApiClientSingleton.GetInstance.ConfirmAssistanceAsync(new ConfirmAssitanceDto() { Email = email, InvitationCode = invitationCode, PhoneNumber = phoneNumber });
+                return Json(new { redirectToUrl = "Confirmation" });
+            }
+
+            return Json(new { redirectToUrl = $"ShowFamilyMembers?invitationcode={invitationCode}" });
+        }
+
+        [HttpGet("Confirmation")]
+        public IActionResult Confirmation()
+        {
+            return View();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        [HttpPost("ResendEmailAsync/{emailTo}/{invitationCode}")]
+        [HttpPost("ResendEmailAsync")]
         public async Task<IActionResult> ResendEmailAsync([FromBody] ConfirmAssitanceDto confirmAssitanceDto)
         {
             await _confirmAssistanceService.ReSendEmailAsync(confirmAssitanceDto);

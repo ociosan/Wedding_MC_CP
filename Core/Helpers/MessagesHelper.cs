@@ -25,9 +25,13 @@ namespace Core.Helpers
             request.AddParameter("token", await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.UltraMsgToken));
             request.AddParameter("to", $"+52{confirmAssitanceDto.PhoneNumber}");
             request.AddParameter("image", $"{await _azureUow.KeyVault.GetSecretAsync(KeyVaultSecretsEnum.ImageLocation)}{confirmAssitanceDto.InvitationCode}.{FileTypeEnum.Jpg}");
-            request.AddParameter("caption", $"Nos encantará contar con tu valiosa asistencia. Atte: Mayra & Carlos");
+            request.AddParameter("caption", $"Nos encantará contar con tu valiosa asistencia. " +
+                $" Presenta esta invitación en la entrada del salón de eventos. " +
+                $" También esta misma invitación se envió al correo { confirmAssitanceDto.Email }" +
+                $" Te esperamos para que seas testigo de este gran amor." +
+                $" Atte: Mayra & Carlos");
             
-            RestResponse response = await client.ExecuteAsync(request);
+            await client.ExecuteAsync(request);
         }
     }
 }

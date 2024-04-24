@@ -10,8 +10,8 @@
         var settings = $.extend({
             date: null,
             offset: null,
-            day: 'Día',
-            days: 'Días',
+            day: 'Dia',
+            days: 'Dias',
             hour: 'Hora',
             hours: 'Horas',
             minute: 'Minuto',

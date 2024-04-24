@@ -1,0 +1,63 @@
+﻿<div id="dl-menu" class="section1 navbar navbar-inverse navbar-fixed-left">
+    <div class="logo">
+        <a onclick="location.href='@Url.Action("ReturnToIndex")'" data-menu="index">
+            <img src="https://cdn-wedding-mc.azureedge.net/cdn/Logo_NavIcon.png" alt="Logo" />
+        </a>
+    </div>
+    <ul class="dl-menu nav navbar-nav menubar vertical_iconmenu">
+        <li data-animation="7" class="active">
+            <partial name="~/Views/Shared/MenuBar/_Rsvp.cshtml" />
+        </li>
+    </ul>
+</div>
+
+
+<div class="main-page-area">
+    <div id="pt-main" class="pt-perspective">
+        <div class="pt-page pt-page-7">
+            <div class="container-fluid display_none bg-main-image">
+                <div class="blur-img bg-rsvp"></div>
+                <div class="page-fixed">
+                    <div class="bg-main-image-overlay-fixed ">
+                        <div class="main-section">
+                            <div class="col-md-12">
+                                <div class="page-title wow fadeInUp" data-class="fadeInUp">
+                                    <h2>Confirma tu Asistencia<span><i class="glyphicon glyphicon-heart"></i></span></h2>
+                                </div>
+                                <div class="container">
+                                    <div class="rsvp">
+                                        <div class="rsvp-form white-box wow fadeInUp col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12" data-class="fadeInUp">
+                                            <p>
+                                                Gracias por confirmar tu valiosa asistencia.
+                                            </p>
+                                            <hr />
+                                            <p>
+                                                Por favor, revisa tu whatsapp y tu correo electrónico donde te llegó tu invitación.
+                                            </p>
+                                            <hr />
+                                            <div class="couple-name">
+                                                <h3 class="wow fadeInLeft"><h3 style="color: black">Mayra </h3></h3>
+                                                <span class="glyphicon glyphicon-heart"></span>
+                                                <h3 class="wow fadeInRight"><h3 style="color: black">Carlos</h3> </h3>
+                                            </div>
+                                            <hr />
+                                            @using (Html.BeginForm("ReturnToIndex", "Home", FormMethod.Post, new { @class = "form floating-label text-left form-validate" }))
+                                            {
+                                                <div class="rsvp-button text-center">
+                                                    <button id="returnToIndex" type="submit" class="hvr-sweep-to-right">Regresar A Inicio</button>
+                                                    <div id="loding" style="display:none; padding-left:20px;">
+                                                        <img src="~/images/ajax-loader.gif" alt="Loader">
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
