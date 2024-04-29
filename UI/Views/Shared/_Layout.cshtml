@@ -22,6 +22,7 @@
     <link type="text/css" rel="stylesheet" href="~/css/animate.css">
     <link type="text/css" rel="stylesheet" href="~/css/hover.css">
     <link type="text/css" rel="stylesheet" href="~/css/slidebars.css">
+    <link type="text/css" rel="stylesheet" href="~/css/magnific-popup.css">
     <title>Mayra & Carlos</title>
     <style>
         .has-error .form-control:focus ~ label, .has-error .form-control.dirty ~ label {
@@ -30,6 +31,21 @@
     </style>
 </head>
 <body>
+    <!-- strat music-box -->
+    <div class="music-box">
+        <button class="music-box-toggle-btn">
+            <i class="fa fa-music"></i>
+        </button>
+
+        <div class="music-holder">
+            <audio controls>
+                <source src="https://cdn-wedding-mc.azureedge.net/songs/Mi_Chatita.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+    <!-- end music box -->
+
     <div class="resonsive-tab">
         <div class="header">
             <div class="container">
@@ -43,6 +59,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
+
     @RenderBody()
 
     <script type="text/javascript" src="~/js/jquery-2.1.4.js"></script>

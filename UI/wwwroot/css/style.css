@@ -2853,3 +2853,77 @@ ul.timeline > li > .timeline-badge {
 	.events-section .event .see-location-btn:hover {
 		color: #e5e5e5;
 	}
+
+
+/*** music box ***/
+.music-box {
+	position: fixed;
+	width: 70px;
+	height: 70px;
+	z-index: 120;
+	bottom: 15px;
+	right: 15px;
+}
+
+@media (max-width: 991px) {
+	.music-box {
+		right: auto;
+		left: 30px;
+	}
+}
+
+.music-box .music-holder {
+	width: 100%;
+	height: 100%;
+	position: initial;
+	right: 0;
+	top: -30px;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: all 0.5s ease-out;
+	-o-transition: all 0.5s ease-out;
+	transition: all 0.5s ease-out;
+}
+
+	.music-box .music-holder iframe {
+		width: 100%;
+		height: 100%;
+	}
+
+.music-box button {
+	background: rgba(0, 0, 0, 0.1);
+	background-color: #002147;
+	width: 40px;
+	height: 40px;
+	line-height: 37px;
+	font-size: 18px;
+	font-size: 1rem;
+	color: white;
+	border: 2px solid #6F8FAF;
+	outline: 0;
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
+	-ms-border-radius: 50%;
+	border-radius: 50%;
+}
+
+@media (max-width: 991px) {
+	.music-box button {
+		right: auto;
+		left: 0;
+	}
+}
+
+.music-box .toggle-music-box {
+	top: -50px;
+	visibility: visible;
+	opacity: 1;
+}
+
+

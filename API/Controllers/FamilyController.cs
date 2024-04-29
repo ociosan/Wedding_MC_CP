@@ -14,26 +14,26 @@ namespace API.Controllers
         }
 
         [HttpGet("GetAllByEmailAddresAsync/{emailAddres}")]
-        public async Task<ActionResult<List<FamilyDto>>> GetAllByEmailAddresAsync([FromRoute] string emailAddres)
+        private async Task<ActionResult<List<FamilyDto>>> GetAllByEmailAddresAsync([FromRoute] string emailAddres)
         {
             return Ok(await _familyRepository.GetAllByEmailAddresAsync(emailAddres));
         }
 
         [HttpGet("GetAllByInvitationCodeAsync/{invitationCode}")]
-        public async Task<ActionResult<List<FamilyDto>>> GetAllByInvitationCodeAsync([FromRoute] string invitationCode)
+        private async Task<ActionResult<List<FamilyDto>>> GetAllByInvitationCodeAsync([FromRoute] string invitationCode)
         {
             return Ok(await _familyRepository.GetAllByInvitationCodeAsync(invitationCode));
         }
 
         [HttpPost("CreateFamilyAsync")]
-        public async Task<IActionResult> CreateFamilyAsync([FromBody] NewFamilyDto familyDto)
+        private async Task<IActionResult> CreateFamilyAsync([FromBody] NewFamilyDto familyDto)
         {
             await _familyRepository.CreateAsync(familyDto);
             return Ok();
         }
 
         [HttpPost("UpdateFamily")]
-        public IActionResult UpdateFamily([FromBody] FamilyDto familyDto)
+        private IActionResult UpdateFamily([FromBody] FamilyDto familyDto)
         {
             _familyRepository.Update(familyDto);
             return Ok();

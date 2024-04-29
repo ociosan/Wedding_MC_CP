@@ -15,14 +15,14 @@ namespace API.Controllers
         }
 
         [HttpPut("AddFamilyMemberAsync")]
-        public async Task<IActionResult> AddFamilyMemberAsync([FromBody] FamilyMemberDto familyMemberDto)
+        private async Task<IActionResult> AddFamilyMemberAsync([FromBody] FamilyMemberDto familyMemberDto)
         {
             await _familyMemberRepository.AddFamilyMemberAsync(familyMemberDto);
             return Ok();
         }
 
         [HttpDelete("DeleteFamilyMember")]
-        public IActionResult DeleteFamilyMember([FromBody] FamilyMemberDto familyMemberDto)
+        private IActionResult DeleteFamilyMember([FromBody] FamilyMemberDto familyMemberDto)
         {
             _familyMemberRepository.Delete(familyMemberDto);
             return Ok();
