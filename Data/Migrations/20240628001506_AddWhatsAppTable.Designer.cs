@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(WeddingDBContext))]
-    [Migration("20240408231825_InitialVersion")]
-    partial class InitialVersion
+    [Migration("20240628001506_AddWhatsAppTable")]
+    partial class AddWhatsAppTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Data.Entities.Email", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateSent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FamilyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("To")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.ToTable("Email");
+                });
 
             modelBuilder.Entity("Data.Entities.Family", b =>
                 {
@@ -49,6 +81,10 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.HasKey("Id");
 
@@ -81,6 +117,49 @@ namespace Data.Migrations
                     b.ToTable("FamilyMember");
                 });
 
+            modelBuilder.Entity("Data.Entities.WhatsApp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateSent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FamilyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.ToTable("WhatsApp");
+                });
+
+            modelBuilder.Entity("Data.Entities.Email", b =>
+                {
+                    b.HasOne("Data.Entities.Family", "Family")
+                        .WithMany("Emails")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+                });
+
             modelBuilder.Entity("Data.Entities.FamilyMember", b =>
                 {
                     b.HasOne("Data.Entities.Family", "Family")
@@ -92,9 +171,24 @@ namespace Data.Migrations
                     b.Navigation("Family");
                 });
 
+            modelBuilder.Entity("Data.Entities.WhatsApp", b =>
+                {
+                    b.HasOne("Data.Entities.Family", "Family")
+                        .WithMany("WhatsApps")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+                });
+
             modelBuilder.Entity("Data.Entities.Family", b =>
                 {
+                    b.Navigation("Emails");
+
                     b.Navigation("FamilyMembers");
+
+                    b.Navigation("WhatsApps");
                 });
 #pragma warning restore 612, 618
         }

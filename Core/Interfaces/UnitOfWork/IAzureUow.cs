@@ -6,5 +6,7 @@ namespace Core.Interfaces.UnitOfWork
     {
         public IKeyVaultRepository KeyVault { get; }
         public IStorageAccountRepository StorageAccount { get; }
+        public IServiceBusRepository ServiceBus { get; }
+
     }
 }

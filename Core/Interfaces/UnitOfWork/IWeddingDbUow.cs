@@ -7,6 +7,8 @@ namespace Core.Interfaces.UnitOfWork
     {
         public IGenericRepository<Family> Family { get; }
         public IGenericRepository<FamilyMember> FamilyMember { get; }
+        public IGenericRepository<Email> Email { get; }
+        public IGenericRepository<WhatsApp> WhatsApp { get; }
         Task SaveAsync();
         void Save();
     }

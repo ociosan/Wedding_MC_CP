@@ -28,7 +28,7 @@ namespace Core.Helpers
             request.AddParameter("caption", $"Nos encantará contar con tu valiosa asistencia. " +
                 $" Presenta esta invitación en la entrada del salón de eventos. " +
                 $" También esta misma invitación se envió al correo { confirmAssitanceDto.Email }" +
-                $" Te esperamos para que seas testigo de este gran amor." +
+                $" Te esperamos para que seas testigo de esta gran unión." +
                 $" Atte: Mayra & Carlos");
             
             await client.ExecuteAsync(request);

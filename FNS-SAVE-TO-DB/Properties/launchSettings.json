@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FNS_SAVE_TO_DB": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7023",
+      "launchBrowser": false
+    }
+  }
+}

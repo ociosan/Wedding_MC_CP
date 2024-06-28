@@ -20,11 +20,35 @@ namespace Data.Migrations
                     InvitationCode = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     EmailAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: true),
                     ConfirmationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Family", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Email",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FamilyId = table.Column<int>(type: "int", nullable: false),
+                    To = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateSent = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Email", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Email_Family_FamilyId",
+                        column: x => x.FamilyId,
+                        principalTable: "Family",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,6 +73,11 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Email_FamilyId",
+                table: "Email",
+                column: "FamilyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FamilyMember_FamilyId",
                 table: "FamilyMember",
                 column: "FamilyId");
@@ -57,6 +86,9 @@ namespace Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Email");
+
             migrationBuilder.DropTable(
                 name: "FamilyMember");
 

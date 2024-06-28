@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(WeddingDBContext))]
-    [Migration("20240419230635_NewCellPhone")]
-    partial class NewCellPhone
+    [Migration("20240626000123_InitialVersion")]
+    partial class InitialVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Data.Entities.Email", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateSent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FamilyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("To")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.ToTable("Email");
+                });
 
             modelBuilder.Entity("Data.Entities.Family", b =>
                 {
@@ -85,6 +117,17 @@ namespace Data.Migrations
                     b.ToTable("FamilyMember");
                 });
 
+            modelBuilder.Entity("Data.Entities.Email", b =>
+                {
+                    b.HasOne("Data.Entities.Family", "Family")
+                        .WithMany("Emails")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Family");
+                });
+
             modelBuilder.Entity("Data.Entities.FamilyMember", b =>
                 {
                     b.HasOne("Data.Entities.Family", "Family")
@@ -98,6 +141,8 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.Family", b =>
                 {
+                    b.Navigation("Emails");
+
                     b.Navigation("FamilyMembers");
                 });
 #pragma warning restore 612, 618
