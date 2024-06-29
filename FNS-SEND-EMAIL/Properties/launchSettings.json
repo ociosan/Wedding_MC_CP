@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FNS_SEND_EMAIL": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7072",
+      "launchBrowser": false
+    }
+  }
+}

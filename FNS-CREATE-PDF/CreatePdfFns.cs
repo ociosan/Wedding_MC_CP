@@ -47,6 +47,9 @@ namespace FNS_CREATE_PDF
 
                 _logger.Information($"{incomingData.InvitationCode}.{FileTypeEnum.Pdf} Succesfully Created");
 
+                await _azureUow.ServiceBus.SendMessageToQueueAsync("sendemail_queue", JsonConvert.SerializeObject(incomingData));
+
+
             }
             catch (Exception ex) 
             {

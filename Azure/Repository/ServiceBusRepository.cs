@@ -1,5 +1,6 @@
 ﻿using Azure.Interfaces.Repository;
 using Azure.Messaging.ServiceBus;
+using System.Text;
 
 namespace Azure.Repository
 {
@@ -19,6 +20,23 @@ namespace Azure.Repository
         {
             ServiceBusSender sender = _serviceBusClient.CreateSender(queueName);
             await sender.SendMessageAsync(new ServiceBusMessage(message));
+        }
+
+        public async Task<string> ReadMessageFromQueueAsync(string queueName)
+        {
+            string body = string.Empty;
+            ServiceBusReceiver serviceBusReceiver = _serviceBusClient.CreateReceiver(queueName);
+
+            var messageInQueue = await serviceBusReceiver.ReceiveMessageAsync();
+            if (messageInQueue is null)
+                return body;
+            else
+            {
+                body = Encoding.ASCII.GetString(messageInQueue.Body);
+                await serviceBusReceiver.CompleteMessageAsync(messageInQueue);
+            }
+
+            return body;
         }
     }
 }
