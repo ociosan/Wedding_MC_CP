@@ -31,7 +31,7 @@ namespace Core.Repository
                     query = query.Include(table);
             }
 
-            return await query.FirstAsync(expression);
+            return await query.FirstOrDefaultAsync(expression);
         }
 
         public async Task<IList<T>> FindAllAsync(Expression<Func<T, bool>>? expression = null, List<string>? includes = null)

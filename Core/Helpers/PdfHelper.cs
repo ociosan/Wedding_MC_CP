@@ -5,6 +5,7 @@ using ConvertApiDotNet;
 using Core.Enum;
 using Core.Interfaces.Helper;
 using Core.Interfaces.UnitOfWork;
+using System.IO;
 
 namespace Core.Helpers
 {
@@ -19,8 +20,8 @@ namespace Core.Helpers
 
         public async Task MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate)
         {
-            if(await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Pdf))
-                return;
+            /*if(await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Pdf))
+                return;*/
 
             string familyInvitationFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\{invitationCode}.pdf"); //CREATE NEW FILE
 
@@ -80,11 +81,11 @@ namespace Core.Helpers
             }
         }
 
-        public async Task<Stream> ConvertPdfToImage(string invitationCode)
+        public async Task<byte[]> ConvertPdfToImage(string invitationCode)
         {
 
             if (await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Jpg))
-                return new MemoryStream(await _azureUow.StorageAccount.DownloadInvitationAsync(invitationCode, FileTypeEnum.Jpg));
+                return await _azureUow.StorageAccount.DownloadInvitationAsync(invitationCode, FileTypeEnum.Jpg);
 
             //Download the new pdf that was created
             byte[] invitationAsPdf = await _azureUow.StorageAccount.DownloadInvitationAsync(invitationCode, FileTypeEnum.Pdf);
@@ -99,7 +100,7 @@ namespace Core.Helpers
 
             //upload the new jpg image to the storage account
             await _azureUow.StorageAccount.UploadInvitationCodeAsync(outputJpgFile, invitationCode, FileTypeEnum.Jpg);
-            return outputJpgFile;
+            return await _azureUow.StorageAccount.DownloadInvitationAsync(invitationCode, FileTypeEnum.Jpg);
         }
     }
 }

@@ -39,21 +39,24 @@ namespace FNS_CREATE_PDF
 
                 FamilyDto familyDto = await _familyRepository.GetOneByInvitationCodeAsync(incomingData.InvitationCode);
 
-                await _helpersUow.Pdf.MakePDF(
-                    familyDto.InvitationCode, 
-                    familyDto.LastName, 
-                    familyDto.FamilyMembers.Select(s => s.Names).ToList(), 
-                    await _azureUow.StorageAccount.DownloadInvitationTemplateAsync());
-
-                _logger.Information($"{incomingData.InvitationCode}.{FileTypeEnum.Pdf} Succesfully Created");
-
-                await _azureUow.ServiceBus.SendMessageToQueueAsync("sendemail_queue", JsonConvert.SerializeObject(incomingData));
-
-
+                if (await _azureUow.StorageAccount.FileExistsAsync(incomingData.InvitationCode, FileTypeEnum.Pdf))
+                {
+                    StorageAccountMessageDto storageAccountMessageDto = new StorageAccountMessageDto() { subject = $"/blobServices/default/containers/invitations/blobs/{incomingData.InvitationCode}.{FileTypeEnum.Pdf}" };
+                    await _azureUow.ServiceBus.SendMessageToQueueAsync("sendemail_queue", JsonConvert.SerializeObject(storageAccountMessageDto));
+                }
+                else
+                {
+                    await _helpersUow.Pdf.MakePDF(
+                        familyDto.InvitationCode,
+                        familyDto.LastName,
+                        familyDto.FamilyMembers.Select(s => s.Names).ToList(),
+                        await _azureUow.StorageAccount.DownloadInvitationTemplateAsync());
+                }
+                _logger.Information($"CREATE PDF - {incomingData.InvitationCode}.{FileTypeEnum.Pdf} Succesfully Created");
             }
             catch (Exception ex) 
             {
-                _logger.Error(ex, ex.Message);
+                _logger.Error(ex, $"CREATE PDF - {ex.Message}");
             }
             finally
             {

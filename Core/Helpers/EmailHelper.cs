@@ -6,6 +6,7 @@ using Core.Interfaces.Helper;
 using Core.Enum;
 using Core.Interfaces.UnitOfWork;
 
+
 namespace Core.Helpers
 {
     public class EmailHelper : IEmailHelper
@@ -35,7 +36,7 @@ namespace Core.Helpers
             message.IsBodyHtml = true;
             message.Body = mailRequestDto.Body;
 
-            Attachment imageAttachment = new Attachment(mailRequestDto.InvitationAsJpg, MediaTypeNames.Image.Jpeg);
+            Attachment imageAttachment = new Attachment(new MemoryStream(mailRequestDto.InvitationAsJpg), MediaTypeNames.Image.Jpeg);
             imageAttachment.ContentId = "image1";
             imageAttachment.ContentDisposition.Inline = true;
 

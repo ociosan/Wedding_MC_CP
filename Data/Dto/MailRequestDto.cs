@@ -1,8 +1,10 @@
-﻿namespace Data.Dto
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+
+namespace Data.Dto
 {
     public class MailRequestDto
     {
-        public MailRequestDto(string toEmail, string subject, string body, Stream invitationAsJpg)
+        public MailRequestDto(string toEmail, string subject, string body, byte[] invitationAsJpg)
         {
             ToEmail = toEmail;
             Subject = subject;
@@ -13,6 +15,6 @@
         public string ToEmail { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
-        public Stream InvitationAsJpg { get; set; }
-     }
+        public byte[] InvitationAsJpg { get; set; }
+    }
 }
