@@ -1,9 +1,48 @@
+function onlyNumbers(e) {
+    var keynum;
+    var keychar;
+
+    if (window.event) {  //IE
+        keynum = e.keyCode;
+    }
+    if (e.which) { //Netscape/Firefox/Opera
+        keynum = e.which;
+    }
+    if ((keynum == 8 || keynum == 9 || keynum == 46 || (keynum >= 35 && keynum <= 40) ||
+        (event.keyCode >= 96 && event.keyCode <= 105))) return true;
+
+    if (keynum == 110 || keynum == 190) {
+        var checkdot = document.getElementById('phoneNumber').value;
+        var i = 0;
+        for (i = 0; i < checkdot.length; i++) {
+            if (checkdot[i] == '.') return false;
+        }
+        if (checkdot.length == 0) document.getElementById('phoneNumber').value = '0';
+        return true;
+    }
+    keychar = String.fromCharCode(keynum);
+
+    return !isNaN(keychar);
+}
+
+
+
 /*Validación del Form final para Confirmar asistencia*/
 if ($("#frmConfirmAssistance").length) {
     $("#frmConfirmAssistance").validate({
         rules: {
-            email: "required",
-            phoneNumber: "required"
+            email: {
+                required: true,
+                minlength: 2,
+                maxlength: 256,
+                email: true
+                
+            },
+            phoneNumber: {
+                required: true,
+                minlength: 10,
+                maxlength: 10
+            }
         },
 
         messages: {
@@ -50,7 +89,11 @@ if ($("#frmConfirmAssistance").length) {
 if ($("#frmSearchFamilyDetails").length) {
     $("#frmSearchFamilyDetails").validate({
         rules: {
-            invitationCodeToConfirm: "required"
+            invitationCodeToConfirm: {
+                required: true,
+                minlength: 2,
+                maxlength: 256
+            }
         },
 
         messages: {

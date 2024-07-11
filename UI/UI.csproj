@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="OpenAPIs\swagger.json" CodeGenerator="NSwagCSharp" Namespace="Wedding.Api" ClassName="FamilyClient">
-      <SourceUri>https://localhost:44310/swagger/v1/swagger.json</SourceUri>
-    </OpenApiReference>
+    <None Include="OpenAPIs\swagger.json" ClassName="FamilyClient" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +31,16 @@
 
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="OpenAPIs\swagger1.json" CodeGenerator="NSwagCSharp" Namespace="Wedding.Api" ClassName="FamilyClient">
+      <SourceUri>https://fns-family-check.azurewebsites.net/api/swagger.json</SourceUri>
+    </OpenApiReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -13,8 +13,8 @@ namespace Data.Entities
         [MaxLength(12)]
         public string? PhoneNumber { get; set; }
         public DateTime? ConfirmationDate { get; set; }
-        public required ICollection<FamilyMember> FamilyMembers { get; set; }
-        public ICollection<Email> Emails { get; set; }
-        public ICollection<WhatsApp> WhatsApps { get; set; }
+        public required IEnumerable<FamilyMember> FamilyMembers { get; set; } = new HashSet<FamilyMember>();
+        //public ICollection<WhatsApp> WhatsApps { get; set; } = new HashSet<WhatsApp>();
+
     }
 }

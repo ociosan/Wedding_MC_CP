@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FNS_SEND_WHATSAPP": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7093",
+      "launchBrowser": false
+    }
+  }
+}

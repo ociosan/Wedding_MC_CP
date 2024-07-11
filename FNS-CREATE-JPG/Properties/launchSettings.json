@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FNS_CREATE_JPG": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7265",
+      "launchBrowser": false
+    }
+  }
+}

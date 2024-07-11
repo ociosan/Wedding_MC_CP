@@ -1,10 +1,12 @@
 using Azure.Interfaces.Repository;
 using Azure.Repository;
+using Core.Helpers;
+using Core.Interfaces.Helper;
+using Core.Interfaces.Repository;
 using Core.Interfaces.UnitOfWork;
+using Core.Repository;
 using Core.UnitOfWork;
-using Data;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,11 +21,6 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        services.AddDbContext<WeddingDBContext>(options =>
-        {
-            options.UseSqlServer(Environment.GetEnvironmentVariable("DbConnectionString"));
-        });
-
         services.AddAzureClients(azureClientFactoryBuilder => {
             azureClientFactoryBuilder.AddSecretClient(new Uri(Environment.GetEnvironmentVariable("KeyVault")));
             azureClientFactoryBuilder.AddBlobServiceClient(Environment.GetEnvironmentVariable("StorageAccountConnectionString"));
@@ -33,8 +30,12 @@ var host = new HostBuilder()
         services.AddSingleton<IStorageAccountRepository, StorageAccountRepository>();
         services.AddSingleton<IServiceBusRepository, ServiceBusRepository>();
 
+
         services.AddSingleton<IWeddingDbUow, WeddingDbUow>();
         services.AddSingleton<IAzureUow, AzureUow>();
+        services.AddSingleton<IHelpersUow, HelpersUow>();
+        services.AddSingleton<IDapperDbHelper, DapperDbHelper>();
+        //services.AddAutoMapper(typeof(FamilyRepository).Assembly);
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)

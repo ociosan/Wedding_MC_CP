@@ -37,13 +37,13 @@ namespace FNS_EMAIL_TEMPLATE
         {
             try
             {
-                _logger.Information($"Create Email Template - Information Received: {Encoding.ASCII.GetString(message.Body)}");
+                _logger.Information($"EMAIL TEMPLATE - Information Received: {Encoding.ASCII.GetString(message.Body)}");
                 ConfirmObjectDto? incomingData = JsonConvert.DeserializeObject<ConfirmObjectDto>(Encoding.ASCII.GetString(message.Body));
 
                 //Get Family from Db
                 FamilyDto familyDto = await _familyRepository.GetOneByInvitationCodeAsync(incomingData.InvitationCode);
 
-                await _weddingDbUow.Email.CreateAsync(new Email() 
+                /*await _weddingDbUow.Email.CreateAsync(new Email() 
                 {
                     FamilyId = familyDto.Id,
                     To = incomingData.Email,
@@ -51,13 +51,13 @@ namespace FNS_EMAIL_TEMPLATE
                     DateCreated = DateTime.UtcNow
                 });
 
-                await _weddingDbUow.SaveAsync();
+                await _weddingDbUow.SaveAsync();*/
 
                 _logger.Information($"Email Template for Invitation code {incomingData.InvitationCode} Succesfully Created");
             }
             catch (Exception ex)
             {
-                _logger.Error($"Email Template: {ex}", ex.Message);
+                _logger.Error(ex, $"EMAIL TEMPLATE: {ex.Message}");
             }
             finally
             {

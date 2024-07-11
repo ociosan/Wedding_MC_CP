@@ -9,10 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Serilog;
-using Data;
-using Microsoft.EntityFrameworkCore;
-using Core.Interfaces.Repository;
-using Core.Repository;
 using Core.Helpers;
 using Core.Interfaces.Helper;
 using Core.AutoMapperProfile;
@@ -23,11 +19,6 @@ var host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
-
-        services.AddDbContext<WeddingDBContext>(options =>
-        {
-            options.UseSqlServer(Environment.GetEnvironmentVariable("DbConnectionString"));
-        });
 
         services.AddAzureClients(azureClientFactoryBuilder => {
             azureClientFactoryBuilder.AddSecretClient(new Uri(Environment.GetEnvironmentVariable("KeyVault")));
@@ -41,8 +32,9 @@ var host = new HostBuilder()
         services.AddSingleton<IAzureUow, AzureUow>();
         services.AddSingleton<IHelpersUow, HelpersUow>();
 
-        services.AddScoped<IFamilyRepository, FamilyRepository>();
         services.AddScoped<IPdfHelper, PdfHelper>();
+        services.AddScoped<IDapperDbHelper, DapperDbHelper>();
+
 
         services.AddSingleton<IWeddingDbUow, WeddingDbUow>();
         services.AddSingleton<IAzureUow, AzureUow>();

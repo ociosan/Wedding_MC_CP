@@ -10,7 +10,6 @@ namespace Data.Dto
         public string? PhoneNumber { get; set; }
         public DateTime? ConfirmationDate { get; set; }
         public ICollection<FamilyMemberDto> FamilyMembers { get; set; }
-        public ICollection<EmailDto> Emails { get; set; }
     }
 
     public class NewFamilyDto

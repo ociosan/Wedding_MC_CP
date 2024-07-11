@@ -1,10 +1,8 @@
 using Azure.Messaging.ServiceBus;
 using Core.Enum;
-using Core.Interfaces.Repository;
 using Core.Interfaces.UnitOfWork;
 using Data.Dto;
 using Data.Entities;
-using iTextSharp.text;
 using Microsoft.Azure.Functions.Worker;
 using Newtonsoft.Json;
 using Serilog;
@@ -32,45 +30,38 @@ namespace FNS_SEND_EMAIL
         }
 
         [Function(nameof(SendEmailFns))]
-        public async Task Run([ServiceBusTrigger("%QUEUE_NAME%", Connection = "SERVICE_BUS_CONNECTION")] ServiceBusReceivedMessage message, ServiceBusMessageActions messageActions)
+        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer)
         {
             try
             {
-                StorageAccountMessageDto accountMessageDto = JsonConvert.DeserializeObject<StorageAccountMessageDto>(Encoding.ASCII.GetString(message.Body));
-                string incomingFileName = accountMessageDto.subject
-                    .Split('/')
-                    .FirstOrDefault(fod => fod.Contains($".{FileTypeEnum.Pdf}"))
-                    .Split('.')
-                    .First();
-
-                Family family = await _weddingDbUow.Family.FindOneAsync(c => c.InvitationCode == incomingFileName);
-                Email emailToSend = await _weddingDbUow.Email.FindOneAsync(x =>
-                    x.To == family.EmailAddress
-                    && x.Status == (int)EmailStatusEnum.Created
-                    && x.DateSent == null);
-
-                if (emailToSend is not null)
+                try
                 {
-                    await _helpersUow.Email.SendEmailAsync(new MailRequestDto(
-                        toEmail: family.EmailAddress,
-                        subject: "Nuestra Boda - Mayra & Carlos",
-                        body: "<html><body><img src=\"cid:image1\"></body></html>",
-                        await _helpersUow.Pdf.ConvertPdfToImage($"{incomingFileName}")));
+                    Email email = await _weddingDbUow.Email.SelectOneRow($"SELECT TOP 1 * FROM dbo.Email WITH(NOLOCK) WHERE Status= {(int)EmailStatusEnum.Created} AND DateSent IS NULL");
+                    if(email != null)
+                    {
+                        Family family = await _weddingDbUow.Family.SelectOneRow($"SELECT TOP 1 * FROM dbo.Family WITH(NOLOCK) WHERE EmailAddress = '{email.To}' AND Id = {email.FamilyId}");
+                        //CHECK IF BLOB EXISTS
+                        if (await _azureUow.StorageAccount.FileExistsAsync(family.InvitationCode, FileTypeEnum.Jpg))
+                        {
+                            await _helpersUow.Email.SendEmailAsync(new MailRequestDto(
+                                toEmail: email.To,
+                                subject: "Nuestra Boda - Mayra & Carlos",
+                                body: "<html><body><img src=\"cid:image1\"></body></html>",
+                                await _helpersUow.Pdf.ConvertPdfToImage($"{family.InvitationCode}")));
 
-                    emailToSend.Status = (int)EmailStatusEnum.Sent;
-                    emailToSend.DateSent = DateTime.UtcNow;
-
-                    _weddingDbUow.Email.Update(emailToSend);
-                    _weddingDbUow.Save();
-
-                    _logger.Information($"Invitation Sent to: {family.EmailAddress} with Invitation #: {incomingFileName} ");
+                            await _weddingDbUow.Email.Update($"UPDATE dbo.Email SET Status = {(int)EmailStatusEnum.Sent}, DateSent = GETDATE() WHERE Id = {email.Id}");
+                            _logger.Information($"SEND EMAIL TO: {email.To} successfully sent");
+                        }
+                    }
                 }
-
-                await messageActions.CompleteMessageAsync(message);
+                catch (Exception ex) 
+                {
+                    _logger.Error(ex, $"SEND EMAIL - {ex.Message}");
+                }
             }
             catch(Exception ex) 
             {
-                _logger.Error(ex, $"Send Email: {ex.Message}");
+                _logger.Error(ex, $"SEND EMAIL: {ex.Message}");
             }
         }
     }

@@ -1,0 +1,35 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "OpenAPI Document on Azure Functions",
+    "description": "This is the OpenAPI Document on Azure Functions",
+    "version": "1.0.0"
+  },
+  "host": "fns-family-check.azurewebsites.net",
+  "basePath": "/api",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/ConfirmAssitanceAsync": {
+      "post": {
+        "tags": [
+          "ConfirmAssitanceDto"
+        ],
+        "description": "Generate WhatsApp and Email for the given Invitation Code",
+        "operationId": "ConfirmAssitanceAsync",
+        "responses": {}
+      }
+    },
+    "/GetOneByInvitationCodeAsync": {
+      "post": {
+        "tags": [
+          "ConfirmAssitanceDto"
+        ],
+        "description": "Get Family Members Information",
+        "operationId": "GetOneByInvitationCodeAsync",
+        "responses": {}
+      }
+    }
+  }
+}

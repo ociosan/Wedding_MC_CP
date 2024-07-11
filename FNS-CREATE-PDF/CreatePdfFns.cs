@@ -4,6 +4,7 @@ using Core.Enum;
 using Core.Interfaces.Repository;
 using Core.Interfaces.UnitOfWork;
 using Data.Dto;
+using Data.Entities;
 using Microsoft.Azure.Functions.Worker;
 using Newtonsoft.Json;
 using Serilog;
@@ -15,17 +16,17 @@ namespace FNS_CREATE_PDF
         private readonly ILogger _logger;
         private readonly IAzureUow _azureUow;
         private readonly IHelpersUow _helpersUow;
-        private readonly IFamilyRepository _familyRepository;
+        private readonly IWeddingDbUow _weddingDbUow;
 
         public CreatePdfFns(ILogger logger, 
             IAzureUow azureUow, 
             IHelpersUow helpersUow,
-            IFamilyRepository familyRepository)
+            IWeddingDbUow weddingDbUow)
         {
             _logger = logger;
             _azureUow = azureUow;
             _helpersUow = helpersUow;
-            _familyRepository = familyRepository;
+            _weddingDbUow = weddingDbUow;
         }
 
         [Function(nameof(CreatePdfFns))]
@@ -33,25 +34,20 @@ namespace FNS_CREATE_PDF
         {
             try
             {
-                _logger.Information($"Create Pdf - Information Received: {Encoding.ASCII.GetString(message.Body)}");
+                _logger.Information($"CREATE PDF - Information Received: {Encoding.ASCII.GetString(message.Body)}");
 
                 ConfirmObjectDto? incomingData = JsonConvert.DeserializeObject<ConfirmObjectDto>(Encoding.ASCII.GetString(message.Body));
 
-                FamilyDto familyDto = await _familyRepository.GetOneByInvitationCodeAsync(incomingData.InvitationCode);
+                Family family = await _weddingDbUow.Family.SelectOneRow($"SELECT * FROM dbo.Family WITH(NOLOCK) WHERE InvitationCode = '{incomingData.InvitationCode}'");
+                IEnumerable<FamilyMember> members = await _weddingDbUow.FamilyMember.GetList($"SELECT * FROM dbo.FamilyMember WITH(NOLOCK) WHERE FamilyId = '{family.Id}'");
 
-                if (await _azureUow.StorageAccount.FileExistsAsync(incomingData.InvitationCode, FileTypeEnum.Pdf))
-                {
-                    StorageAccountMessageDto storageAccountMessageDto = new StorageAccountMessageDto() { subject = $"/blobServices/default/containers/invitations/blobs/{incomingData.InvitationCode}.{FileTypeEnum.Pdf}" };
-                    await _azureUow.ServiceBus.SendMessageToQueueAsync("sendemail_queue", JsonConvert.SerializeObject(storageAccountMessageDto));
-                }
-                else
-                {
-                    await _helpersUow.Pdf.MakePDF(
-                        familyDto.InvitationCode,
-                        familyDto.LastName,
-                        familyDto.FamilyMembers.Select(s => s.Names).ToList(),
-                        await _azureUow.StorageAccount.DownloadInvitationTemplateAsync());
-                }
+
+                await _helpersUow.Pdf.MakePDF(
+                    family.InvitationCode,
+                    family.LastName,
+                    members.Select(s => s.Names).ToList(),
+                    await _azureUow.StorageAccount.DownloadInvitationTemplateAsync());
+
                 _logger.Information($"CREATE PDF - {incomingData.InvitationCode}.{FileTypeEnum.Pdf} Succesfully Created");
             }
             catch (Exception ex) 

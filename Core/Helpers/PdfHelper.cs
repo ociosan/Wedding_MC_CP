@@ -20,11 +20,10 @@ namespace Core.Helpers
 
         public async Task MakePDF(string invitationCode, string lastName, List<string> members, byte[] invitationCodeTemplate)
         {
-            /*if(await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Pdf))
-                return;*/
+            if(await _azureUow.StorageAccount.FileExistsAsync(invitationCode, FileTypeEnum.Pdf))
+                return;
 
             string familyInvitationFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"Invitations\\{invitationCode}.pdf"); //CREATE NEW FILE
-
             // Creating watermark on a separate layer
             // Creating iTextSharp.text.pdf.PdfReader object to read the Existing PDF Document
             PdfReader reader1 = new PdfReader(invitationCodeTemplate);

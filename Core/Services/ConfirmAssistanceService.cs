@@ -36,13 +36,13 @@ namespace Core.Services
                 familyDto.FamilyMembers.Select(s => s.Names).ToList(),
                 await _azureUow.StorageAccount.DownloadInvitationTemplateAsync());
 
-            /*await _helpersUow.Email.SendEmailAsync(new MailRequestDto(
+            await _helpersUow.Email.SendEmailAsync(new MailRequestDto(
 
                 confirmAssitanceDto.Email,
                 "Nuestra Boda - Mayra & Carlos",
                 "<html><body><img src=\"cid:image1\"></body></html>",
-                await _helpersUow.Pdf.ConvertPdfToImage(confirmAssitanceDto.InvitationCode),""
-            ));*/
+                await _helpersUow.Pdf.ConvertPdfToImage(confirmAssitanceDto.InvitationCode)
+            ));
 
             await _helpersUow.Messages.SendWhatsappAsync(confirmAssitanceDto);
 

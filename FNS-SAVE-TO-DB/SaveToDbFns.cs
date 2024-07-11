@@ -3,10 +3,12 @@ using System.Text;
 using Azure.Messaging.ServiceBus;
 using Core.Interfaces.UnitOfWork;
 using Data.Dto;
-using Data.Entities;
 using Microsoft.Azure.Functions.Worker;
 using Serilog;
 using Newtonsoft.Json;
+using Core.Interfaces.Service;
+using Data.Entities;
+using Core.Enum;
 
 namespace FNS_SAVE_TO_DB
 {
@@ -15,6 +17,7 @@ namespace FNS_SAVE_TO_DB
         private readonly ILogger _logger;
         private readonly IWeddingDbUow _weddingDbUow;
         private readonly IAzureUow _azureUow;
+        private readonly IConfirmAssistanceService _confirmAssistanceService;
 
         public SaveToDbFns(ILogger logger, IWeddingDbUow weddingDbUow, IAzureUow azureUow)
         {
@@ -28,25 +31,31 @@ namespace FNS_SAVE_TO_DB
         {
             try
             {
-                _logger.Information($"Information Received: {Encoding.ASCII.GetString(message.Body)}");
+                _logger.Information($"SAVE TO DB - Information Received: {Encoding.ASCII.GetString(message.Body)}");
 
                 ConfirmObjectDto? incomingData = JsonConvert.DeserializeObject<ConfirmObjectDto>(Encoding.ASCII.GetString(message.Body));
 
-                await UpdateDatabaseAsync(incomingData);
-                await SendToQueuesAsync(incomingData);
+                await _weddingDbUow.Family.Update($"UPDATE dbo.Family SET EmailAddress = '{incomingData.Email}', PhoneNumber = '{incomingData.PhoneNumber}' WHERE InvitationCode = '{incomingData.InvitationCode}';");
 
-                //complete the message
-                await messageActions.CompleteMessageAsync(message);
+                Family familyDb = await _weddingDbUow.Family.SelectOneRow($"SELECT TOP 1 * FROM dbo.Family WITH(NOLOCK) WHERE InvitationCode = '{incomingData.InvitationCode}'");
+
+                await _weddingDbUow.Email.InsertInto($"INSERT INTO dbo.Email (FamilyId, [To], Status, DateCreated) VALUES (@FamilyId, @To, @Status, @DateCreated)",
+                    new Email() { FamilyId = familyDb.Id, To = incomingData.Email, Status = (int)EmailStatusEnum.Created, DateCreated = DateTime.UtcNow });
+
+                await _weddingDbUow.WhatsApp.InsertInto($"INSERT INTO dbo.WhatsApp (FamilyId, PhoneNumber, Status, DateCreated) VALUES (@FamilyId, @PhoneNumber, @Status, @DateCreated)",
+                    new WhatsApp() { FamilyId = familyDb.Id, PhoneNumber = incomingData.PhoneNumber, Status = (int)WhatsAppStatusEnum.Created, DateCreated = DateTime.UtcNow });
+
+                await _azureUow.ServiceBus.SendMessageToQueueAsync("createinvitationpdf_queue", JsonConvert.SerializeObject(incomingData));
+
+
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, ex.Message);
-
-                if (ex is SqlException)
-                    await messageActions.DeferMessageAsync(message);
-                else
-                    await messageActions.CompleteMessageAsync(message);
-
+            }
+            finally
+            {
+                await messageActions.CompleteMessageAsync(message);
             }
         }
 
@@ -54,22 +63,11 @@ namespace FNS_SAVE_TO_DB
         #region private
         private async Task SendToQueuesAsync(ConfirmObjectDto? incomingData)
         {
-            await _azureUow.ServiceBus.SendMessageToQueueAsync("createinvitationpdf_queue", JsonConvert.SerializeObject(incomingData));
+            /*await _azureUow.ServiceBus.SendMessageToQueueAsync("createinvitationpdf_queue", JsonConvert.SerializeObject(incomingData));
+            await _azureUow.ServiceBus.SendMessageToQueueAsync("createinvitationjpg_queue", JsonConvert.SerializeObject(incomingData));
             await _azureUow.ServiceBus.SendMessageToQueueAsync("createemailtemplate_queue", JsonConvert.SerializeObject(incomingData));
-            await _azureUow.ServiceBus.SendMessageToQueueAsync("createwhatsapptemplate_queue", JsonConvert.SerializeObject(incomingData));
-        }
+            await _azureUow.ServiceBus.SendMessageToQueueAsync("createwhatsapptemplate_queue", JsonConvert.SerializeObject(incomingData));*/
 
-        private async Task UpdateDatabaseAsync(ConfirmObjectDto? incomingData)
-        {
-            //Get Info By  Invitation Code
-            Family familyDb = await _weddingDbUow.Family.FindOneAsync(x => x.InvitationCode == incomingData.InvitationCode);
-
-            familyDb.EmailAddress = incomingData.Email;
-            familyDb.PhoneNumber = incomingData.PhoneNumber;
-
-            //update 
-            _weddingDbUow.Family.Update(familyDb);
-            await _weddingDbUow.SaveAsync();
         }
         #endregion
     }

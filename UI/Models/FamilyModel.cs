@@ -1,4 +1,5 @@
-﻿using Wedding.Api;
+﻿using Data.Dto;
+using Wedding.Api;
 
 namespace UI.Models
 {

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-
-namespace Data.Dto
+﻿namespace Data.Dto
 {
     public class MailRequestDto
     {

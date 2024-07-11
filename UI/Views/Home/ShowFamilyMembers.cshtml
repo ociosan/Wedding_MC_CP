@@ -84,7 +84,7 @@
                                                     <input type="text" class="form-control" name="email" id="email" required />
                                                     <label for="email" style="font-size: 12px">Y también tu correo electrónico</label>
                                                 </div>
-                                                <input type="hidden" name="invitationCode" id="invitationCode" value="@Html.DisplayFor(model => model.Family.InvitationCode)" />
+                                                <input type="hidden" name="invitationCode" id="invitationCode" onkeydown="return onlyNumbers(event)" value="@Html.DisplayFor(model => model.Family.InvitationCode)" />
                                                 <div class="rsvp-button text-center">
                                                     <button id="confirmAssistance" type="submit" class="hvr-sweep-to-right">Confirmar Asistencia</button>
                                                     <div id="loding" style="display:none; padding-left:20px;">

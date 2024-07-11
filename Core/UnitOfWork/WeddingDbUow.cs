@@ -3,48 +3,30 @@ using Data;
 using Core.Interfaces.Repository;
 using Core.Repository;
 using Core.Interfaces.UnitOfWork;
+using Core.Interfaces.Helper;
 
 namespace Core.UnitOfWork
 {
     public class WeddingDbUow : IWeddingDbUow
     {
-        private readonly WeddingDBContext _weddingDBContext;
+        private readonly IDapperDbHelper _dapperDbHelper;
+
         private IGenericRepository<Family>? _family;
         private IGenericRepository<FamilyMember>? _familyMember;
         private IGenericRepository<Email>? _email;
         private IGenericRepository<WhatsApp>? _whatsApp;
 
-        public WeddingDbUow(WeddingDBContext weddingDBContext)
+        public WeddingDbUow(IDapperDbHelper dapperDbHelper)
         {
-            _weddingDBContext = weddingDBContext;
+            _dapperDbHelper = dapperDbHelper;
         }
 
-        public IGenericRepository<Family> Family => _family ??= new GenericRepository<Family>(_weddingDBContext);
-        public IGenericRepository<FamilyMember> FamilyMember => _familyMember ??= new GenericRepository<FamilyMember>(_weddingDBContext);
-        public IGenericRepository<Email> Email => _email ??= new GenericRepository<Email>(_weddingDBContext);
-        public IGenericRepository<WhatsApp> WhatsApp => _whatsApp ??= new GenericRepository<WhatsApp>(_weddingDBContext);
+        public IGenericRepository<Family> Family => _family ??= new GenericRepository<Family>(_dapperDbHelper);
+        public IGenericRepository<FamilyMember> FamilyMember => _familyMember ??= new GenericRepository<FamilyMember>(_dapperDbHelper);
+        public IGenericRepository<Email> Email => _email ??= new GenericRepository<Email>(_dapperDbHelper);
+        public IGenericRepository<WhatsApp> WhatsApp => _whatsApp ??= new GenericRepository<WhatsApp>(_dapperDbHelper);
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
 
-        private void Dispose(bool dispose)
-        {
-            if (dispose)
-                _weddingDBContext.Dispose();
-        }
-
-        public async Task SaveAsync()
-        {
-            await _weddingDBContext.SaveChangesAsync();
-        }
-
-        public void Save()
-        {
-            _weddingDBContext.SaveChanges();
-        }
 
     }
 }

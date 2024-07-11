@@ -1,92 +1,80 @@
-﻿using Core.Interfaces.Repository;
-using Data;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using Core.Interfaces.Helper;
+using Core.Interfaces.Repository;
+using Dapper;
 
 namespace Core.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class 
     {
-        private readonly WeddingDBContext _weddingDBContext;
-        private readonly DbSet<T> _db;
+        private readonly IDapperDbHelper _dapperDbHelper;
 
-        public GenericRepository(WeddingDBContext weddingDBContext)
+        public GenericRepository(IDapperDbHelper dapperDbHelper)
         {
-            _weddingDBContext = weddingDBContext;
-            _db = weddingDBContext.Set<T>();
+            _dapperDbHelper = dapperDbHelper;
         }
 
-        public async Task CreateAsync(T entity)
+        public async Task InsertInto(string sqlInsertStatement, TEntity entity)
         {
-            await _db.AddAsync(entity);
-        }
-
-        public async Task<T> FindOneAsync(Expression<Func<T, bool>> expression, List<string>? includes = null)
-        {
-            IQueryable<T> query = _db;
-
-            if (includes != null)
+            try
             {
-                foreach (var table in includes)
-                    query = query.Include(table);
+                using (_dapperDbHelper.Connection)
+                {
+                    _dapperDbHelper.Connection.Open();
+                    await _dapperDbHelper.Connection.ExecuteAsync(sqlInsertStatement, entity);
+                }
             }
-
-            return await query.FirstOrDefaultAsync(expression);
-        }
-
-        public async Task<IList<T>> FindAllAsync(Expression<Func<T, bool>>? expression = null, List<string>? includes = null)
-        {
-            IQueryable<T> query = _db;
-            if (expression != null)
-                query = query.Where(expression);
-
-            if (includes != null)
+            finally
             {
-                foreach (var table in includes)
-                    query = query.Include(table);
+                _dapperDbHelper.CloseConnection();
             }
-
-            return await query.ToListAsync();
         }
 
-        public async Task<bool> IsExistsAsync(Expression<Func<T, bool>> expression)
+        public async Task<int> Update(string sqlUpdateStatement)
         {
-            IQueryable<T> query = _db;
-            return await query.AnyAsync(expression);
+            try
+            {
+                using (_dapperDbHelper.Connection)
+                {
+                    _dapperDbHelper.Connection.Open();
+                    return await _dapperDbHelper.Connection.ExecuteAsync(sqlUpdateStatement);
+                }
+            }
+            finally
+            {
+                _dapperDbHelper.CloseConnection();
+            }
         }
 
-        #region Synchronous
-
-        public void Delete(T entity)
+        public async Task<TEntity> SelectOneRow(string sqlSelectStatement)
         {
-            _db.Remove(entity);
-            Save();
+            try
+            {
+                using (_dapperDbHelper.Connection)
+                {
+                    _dapperDbHelper.Connection.Open();
+                    return await _dapperDbHelper.Connection.QueryFirstOrDefaultAsync<TEntity>(sqlSelectStatement);
+                }
+            }
+            finally
+            {
+                _dapperDbHelper.CloseConnection();
+            }
         }
 
-        public void Update(T entity)
+        public async Task<IEnumerable<TEntity>> GetList(string sqlSelectStatement)
         {
-            _db.Update(entity);
-            Save();
+            try
+            {
+                using (_dapperDbHelper.Connection)
+                {
+                    _dapperDbHelper.Connection.Open();
+                    return await _dapperDbHelper.Connection.QueryAsync<TEntity>(sqlSelectStatement);
+                }
+            }
+            finally
+            {
+                _dapperDbHelper.CloseConnection();
+            }
         }
-
-
-        private void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool dispose)
-        {
-            if (dispose)
-                _weddingDBContext.Dispose();
-        }
-
-        private void Save()
-        {
-            _weddingDBContext.SaveChanges();
-        }
-
-        #endregion
     }
 }
